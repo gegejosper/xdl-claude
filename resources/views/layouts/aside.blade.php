@@ -29,7 +29,7 @@
                         <span class="menu-icon">
                             <i class="ki-outline ki-element-11 fs-2"></i>
                         </span>
-                        <span class="menu-title">Dashboard</span>
+                        <span class="menu-title">Dashboard | {{ Auth::user()->primary_role_name()}}</span>
                     </a>
                     <!--end:Menu link-->
                 </div>
