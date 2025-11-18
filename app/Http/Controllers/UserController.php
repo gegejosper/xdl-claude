@@ -27,7 +27,10 @@ class UserController extends Controller
         $auth_level = $auth_user->role_level();
         //dd($auth_level);
         // show only roles LOWER than the current user's level
-        $roles = Role::where('level', '>', $auth_level)->get();
+        $roles = Role::when($auth_level != 0, function($query) use ($auth_level){
+                return $query->where('level', '>', $auth_level);
+            })
+            ->get();
         return view('user-management.users.create', compact('roles','permissions'));
     }
 
