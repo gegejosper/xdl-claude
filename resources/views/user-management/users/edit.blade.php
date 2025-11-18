@@ -39,14 +39,19 @@
                             <input type="password" name="password_confirmation" class="form-control">
                         </div>
                         <div class="mb-3">
+                            @php
+                                $current_user_role = auth()->user()->roles->first()->name ?? null;
+                            @endphp
                             <label for="role_id" class="form-label">Role</label>
                             <select name="role_id" id="role_id" class="form-select" required>
                                 <option value="">-- Select Role --</option>
                                 @foreach($roles as $role)
-                                    <option value="{{ $role->id }}"
-                                        {{ isset($user) && $user->roles->first() && $user->roles->first()->id == $role->id ? 'selected' : '' }}>
-                                        {{ $role->name }}
-                                    </option>
+                                    @if($current_user_role === 'superadmin' || $role->name !== 'superadmin')
+                                        <option value="{{ $role->id }}"
+                                            {{ $user->roles->first() && $user->roles->first()->id == $role->id ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
