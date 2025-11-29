@@ -1,4 +1,3 @@
-
 @extends('layouts.auth')
 @section('content')
     <div class="d-flex flex-column flex-root">
@@ -17,7 +16,7 @@
                     </a>
                     <!--end::Logo-->
                     <!--begin::Title-->
-                    <h2 class="text-white fw-normal m-0">Providing Business Solutions from A-Z.</h2>
+                    <h2 class="text-white fw-normal m-0"> [ {{config('app.desc')}} ]</h2>
                     <!--end::Title-->
                 </div>
                 <!--begin::Aside-->

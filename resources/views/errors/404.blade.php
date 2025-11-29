@@ -3,13 +3,17 @@
 @section('content')
 <div class="d-flex flex-column flex-root">
     <!--begin::Page bg image-->
-    <style>body { background-image: url({{asset('assets/media/auth/bg1.jpg')}}); } [data-bs-theme="dark"] body { background-image: url('assets/media/auth/bg1-dark.jpg'); }</style>
+    <style>body { background-image: url({{asset('assets/media/auth/bg4.jpg')}}); } [data-bs-theme="dark"] body { background-image: url('assets/media/auth/bg1-dark.jpg'); }</style>
     <!--end::Page bg image-->
     <!--begin::Authentication - Signup Welcome Message -->
     <div class="d-flex flex-column flex-center flex-column-fluid">
         <!--begin::Content-->
         <div class="d-flex flex-column flex-center text-center p-10">
             <!--begin::Wrapper-->
+            <a href="/" class="fs-1 text-black text-decoration-none">
+                [ {{config('app.name')}} ]
+            </a>
+            <h4 class="text-black fw-normal mb-10"> [ {{config('app.desc')}} ]</h4>
             <div class="card card-flush w-lg-650px py-5">
                 <div class="card-body py-15 py-lg-20">
                     <!--begin::Title-->

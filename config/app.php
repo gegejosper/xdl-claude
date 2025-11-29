@@ -13,7 +13,9 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'BASE PROJECT'),
+    'abbr' => env('APP_ABBR', 'BASE'),
+    'desc' => env('APP_DESC', 'BASE PROJECT DESCRIPTION'),
 
     /*
     |--------------------------------------------------------------------------

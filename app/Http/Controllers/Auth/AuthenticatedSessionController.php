@@ -30,24 +30,7 @@ class AuthenticatedSessionController extends Controller
 
     //     return redirect()->intended(route('dashboard', absolute: false));
     // }
-    public function store(LoginRequest $request)
-    {
-        // $request->authenticate();
-        // $request->session()->regenerate();
-
-        // $user = Auth::user();
-
-        // if ($user->hasRole('admin')) {
-        //     return redirect()->intended('/panel/dashboard');
-        // } 
-        // else if ($user->hasRole('superadmin')) {
-        //     return redirect()->intended('/panel/dashboard');
-        // } 
-        // else if ($user->hasRole('cashier')) {
-        //     return redirect()->intended('/panel/cashier');
-        // }
-
-        // return redirect()->intended('/panel/dashboard');
+    public function store(LoginRequest $request){
 
         $request->authenticate();
         $request->session()->regenerate();
@@ -75,7 +58,7 @@ class AuthenticatedSessionController extends Controller
 
         // Otherwise, normal Laravel redirect
         return redirect()->intended($redirect_url);
-        }
+    }
 
     /**
      * Destroy an authenticated session.

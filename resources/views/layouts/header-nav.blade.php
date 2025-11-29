@@ -12,7 +12,7 @@
         <!--begin::Mobile logo-->
         <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
             <a href="/" class="d-lg-none">
-                <span class="text-white">[ BASE ] </span>
+                <span class="text-white">[ {{config('app.abbr')}} ]</span>
             </a>
         </div>
         <!--end::Mobile logo-->

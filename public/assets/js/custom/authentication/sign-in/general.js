@@ -71,7 +71,10 @@ var KTSigninGeneral = (function() {
                         })
                         .catch(function(error) {
                             let message = "Sorry, invalid credentials. Please try again.";
-
+                            if (error.response && error.response.data.errors && error.response.data.errors.inactive) {
+                                window.location.href = error.response.data.errors.inactive;
+                                return; // stop further handling
+                            }
                             if (error.response && error.response.status === 422) {
                                 message = "Validation error: please check your inputs.";
                             }

@@ -49,9 +49,15 @@ class LoginRequest extends FormRequest
             ]);
         }
         // ✅ Check if user is inactive after login
+        // if (Auth::user()->status === 'inactive') {
+        //     Auth::logout();
+        //     redirect()->route('inactive')->send(); // force redirect
+        // }
         if (Auth::user()->status === 'inactive') {
             Auth::logout();
-            redirect()->route('inactive')->send(); // force redirect
+            throw ValidationException::withMessages([
+                'inactive' => '/inactive',
+            ]);
         }
         RateLimiter::clear($this->throttleKey());
     }
