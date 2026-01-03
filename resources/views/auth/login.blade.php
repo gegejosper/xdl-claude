@@ -36,11 +36,9 @@
                         @else
                         <form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" data-kt-redirect-url="{{ url('/panel/dashboard') }}" method="POST" action="{{ route('login') }}">
                             @csrf
-                            <input type="hidden" name="device_id" id="device_id"  class="form-control @error('device') is-invalid @enderror">   
+                            <input type="hidden" name="device_id" id="device_id" >   
                             @error('device')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
+                                <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                             <!--begin::Heading-->
                             <div class="text-center mb-11">
