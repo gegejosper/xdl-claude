@@ -23,11 +23,14 @@
             <div class="menu menu-column menu-title-gray-800 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500" id="#kt_aside_menu" data-kt-menu="true">
                 
                 <!--begin:Menu item-->
-                <div class="menu-item">
+                 <div data-kt-menu-trigger="click" class="menu-item  menu-accordion {{ ( request()->segment(2) == 'dashboard') ? 'here' : '' }}">
                     <!--begin:Menu link-->
                     <a class="menu-link" href="/panel/dashboard">
                         <span class="menu-icon">
-                            <i class="ki-outline ki-element-11 fs-2"></i>
+                            <i class="ki-duotone ki-home-2 fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
                         </span>
                         <span class="menu-title">Dashboard | {{ Auth::user()->primary_role_name()}}</span>
                     </a>
@@ -40,7 +43,11 @@
                     <!--begin:Menu link-->
                     <span class="menu-link">
                         <span class="menu-icon">
-                            <i class="ki-outline ki-abstract-28 fs-2"></i>
+                            <i class="ki-duotone ki-user-square fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                                </i>
                         </span>
                         <span class="menu-title">User Management</span>
                         <span class="menu-arrow"></span>
@@ -53,7 +60,10 @@
                             <!--begin:Menu link-->
                             <span class="menu-link">
                                 <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
+                                    <i class="ki-duotone ki-user">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
                                 </span>
                                 <span class="menu-title">Users</span>
                                 <span class="menu-arrow"></span>
@@ -95,7 +105,12 @@
                             <!--begin:Menu link-->
                             <span class="menu-link">
                                 <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
+                                    <i class="ki-duotone ki-book">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                        <span class="path4"></span>
+                                    </i>
                                 </span>
                                 <span class="menu-title">Roles</span>
                                 <span class="menu-arrow"></span>
@@ -133,7 +148,12 @@
                             <!--begin:Menu link-->
                             <span class="menu-link">
                                 <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
+                                    <i class="ki-duotone ki-book-open">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                        <span class="path4"></span>
+                                    </i>
                                 </span>
                                 <span class="menu-title">Permissions</span>
                                 <span class="menu-arrow"></span>
@@ -172,6 +192,76 @@
                 </div>
                 <!--end:Menu item-->
                 @endcan
+                @can('manage-settings')
+                <div data-kt-menu-trigger="click" class="menu-item  menu-accordion {{ (request()->segment(2) == 'logs' ) ? 'here show' : '' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <i class="ki-solid ki-gear fs-2"></i>
+                        </span>
+                        <span class="menu-title">Settings</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <!--end:Menu link-->
+                    <!--begin:Menu sub-->
+                    <div class="menu-sub menu-sub-accordion">
+                        <!--begin:Menu item-->
+                        <div data-kt-menu-trigger="click" class="menu-item {{ (request()->segment(2) == 'logs') ? 'here' : '' }} menu-accordion mb-1">
+                            <!--begin:Menu link-->
+                            <a href="logs" class="menu-link">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Logs</span>
+                            </a>
+                            <!--end:Menu link-->
+                        </div>
+                        <!--end:Menu item-->
+   
+                        <!--begin:Menu item-->
+                        <div data-kt-menu-trigger="click" class="menu-item {{ (request()->segment(2) == 'roles') ? 'here show' : '' }} menu-accordion mb-1">
+                            <!--begin:Menu link-->
+                            <span class="menu-link">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Roles</span>
+                                <span class="menu-arrow"></span>
+                            </span>
+                            <!--end:Menu link-->
+                            <!--begin:Menu sub-->
+                            <div class="menu-sub menu-sub-accordion">
+                                <!--begin:Menu item-->
+                                <div class="menu-item">
+                                    <!--begin:Menu link-->
+                                    <a class="menu-link {{ (request()->segment(2) == 'roled' && request()->segment(3) == null ) ? 'active' : '' }} " href="/panel/roles">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Roles List</span>
+                                    </a>
+                                    <!--end:Menu link-->
+                                    <!--begin:Menu link-->
+                                    <a class="menu-link {{ (request()->segment(2) == 'roles' && request()->segment(3) == 'create' ) ? 'active' : '' }} " href="{{route('roles.create')}}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Create</span>
+                                    </a>
+                                    <!--end:Menu link-->
+                                </div>
+                                <!--end:Menu item-->
+                                
+                            </div>
+                            <!--end:Menu sub-->
+                        </div>
+                        <!--end:Menu item-->
+                    </div>
+                    <!--end:Menu sub-->
+                </div>
+                @endcan
+                <!--end:Menu item-->
+
                
             </div>
             <!--end::Menu-->

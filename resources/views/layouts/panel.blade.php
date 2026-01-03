@@ -4172,6 +4172,7 @@
 		<!--begin::Custom Javascript(used for this page only)-->
 		<script src="{{asset('assets/js/widgets.bundle.js')}}"></script>
 		<script src="{{asset('assets/js/custom/widgets.js')}}"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
 		@yield('jslinks')
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->

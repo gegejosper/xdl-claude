@@ -10,6 +10,7 @@
 		<!--end::Theme mode setup on page load-->
 		<!--begin::Main-->
 		<!--begin::Root-->
+		<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
 		@yield('content')
 		<!--end::Root-->
 		<!--end::Main-->

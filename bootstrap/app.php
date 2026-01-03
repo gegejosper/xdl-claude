@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'device.verify' => \App\Http\Middleware\VerifyDevice::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -26,5 +27,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->booting(function (Application $app) {
         Gate::define('manage-users-related', fn(User $user) => $user->hasRole('superadmin'));
         Gate::define('manage-users', fn(User $user) => $user->hasAnyRole(['superadmin', 'admin']));
+        Gate::define('manage-settings', fn(User $user) => $user->hasAnyRole(['superadmin', 'admin']));
     })
     ->create();

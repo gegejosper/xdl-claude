@@ -36,6 +36,12 @@
                         @else
                         <form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" data-kt-redirect-url="{{ url('/panel/dashboard') }}" method="POST" action="{{ route('login') }}">
                             @csrf
+                            <input type="hidden" name="device_id" id="device_id"  class="form-control @error('device') is-invalid @enderror">   
+                            @error('device')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                            @enderror
                             <!--begin::Heading-->
                             <div class="text-center mb-11">
                                 <!--begin::Title-->
@@ -71,16 +77,27 @@
                             <div class="fv-row mb-3">
                                 <!--begin::Password-->
                                 <label for="password" class="form-label">Password</label>
-                                <input 
-                                    type="password" 
-                                    placeholder="Password" 
-                                    id="password" 
-                                    name="password" 
-                                    required 
-                                    autocomplete="current-password" 
-                                    class="form-control bg-transparent @error('password') is-invalid @enderror" 
-                                />
+                              <div style="position: relative;">
+                                    <input 
+                                        type="password" 
+                                        placeholder="Password" 
+                                        id="password" 
+                                        name="password" 
+                                        required 
+                                        autocomplete="current-password" 
+                                        class="form-control bg-transparent @error('password') is-invalid @enderror" 
+                                    />
 
+                                    <span onclick="togglePassword()" 
+                                        style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">
+                                        <i id="toggleIcon" class="ki-duotone ki-eye-slash fs-1">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                            <span class="path4"></span>
+                                        </i>
+                                    </span>
+                                </div>
                                 @error('password')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -128,7 +145,7 @@
                                 </button>
                             </div>
                             <!--end::Submit button-->
-                                
+                            
                         </form>
                         @endauth
                         <!--end::Form-->
@@ -142,4 +159,37 @@
         </div>
         <!--end::Authentication - Sign-in-->
     </div>
+
+
+<script>
+  FingerprintJS.load().then(fp => {
+    fp.get().then(result => {
+      document.getElementById('device_id').value = result.visitorId;
+    });
+  });
+</script>
+<script>
+function togglePassword() {
+    const input = document.getElementById('password');
+    const icon  = document.getElementById('toggleIcon');
+
+    if (input.type === 'password') {
+        input.type = 'text';
+
+        // switch to "eye-slash" icon
+        icon.classList.remove('ki-eye-slash');
+        icon.classList.add('ki-eye');
+    } else {
+        input.type = 'password';
+
+        // switch back to "eye" icon
+        icon.classList.remove('ki-eye');
+        icon.classList.add('ki-eye-slash');
+    }
+}
+</script>
+
+
 @endsection
+
+
