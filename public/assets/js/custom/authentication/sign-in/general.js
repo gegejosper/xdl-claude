@@ -79,6 +79,11 @@ var KTSigninGeneral = (function() {
                                 message = "Validation error: please check your inputs.";
                             }
 
+                             // If Laravel sends custom message (like device already logged in)
+                            if (error.response && error.response.data && error.response.data.message) {
+                                message = error.response.data.message;
+                            }
+
                             Swal.fire({
                                 text: message,
                                 icon: "error",

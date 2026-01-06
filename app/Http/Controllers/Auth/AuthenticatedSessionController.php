@@ -51,9 +51,9 @@ class AuthenticatedSessionController extends Controller
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-               throw ValidationException::withMessages([
-                    'device' => 'This account is already logged in on another device.'
-                ]);
+               return response()->json([
+                'message' => 'This account is already logged in on another device.'
+              ], 423);
             }
 
             //  First login → lock device
