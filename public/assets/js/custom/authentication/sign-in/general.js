@@ -54,14 +54,7 @@ var KTSigninGeneral = (function() {
                                 "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
                             }
                         })
-                        // .then(function(response) {
-                        //     if (response.data && response.data.redirect) {
-                        //         window.location.href = response.data.redirect; // Laravel decides
-                        //     } else {
-                        //         window.location.reload(); // fallback
-                        //     }
-                        // })
-                        .then(function(response) {
+                       .then(function(response) {
                             const redirect_url = response.data.redirect_url;
                             if (redirect_url) {
                                 window.location.href = redirect_url;
@@ -82,6 +75,10 @@ var KTSigninGeneral = (function() {
                              // If Laravel sends custom message (like device already logged in)
                             if (error.response && error.response.data && error.response.data.message) {
                                 message = error.response.data.message;
+                            }
+
+                            if (error.response && error.response.status === 419) {
+                                window.location.href = redirect_url;
                             }
 
                             Swal.fire({

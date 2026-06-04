@@ -11,6 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ProductController;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
+
 Route::middleware(['web'])->group(function () {
 // Route::get('/', function () {
 //     return view('layouts.panel');
@@ -22,7 +23,10 @@ Route::middleware(['auth'])->get('/panel/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
-Route::prefix('panel')->middleware(['auth', 'device.verify'])->group(function () {
+Route::prefix('panel')->middleware(['auth'])->group(function () {
+
+Route::middleware('device.verify')->group(function() {
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -30,6 +34,8 @@ Route::prefix('panel')->middleware(['auth', 'device.verify'])->group(function ()
     
     Route::middleware('can:manage-users')->group(function () {
         Route::resource('users', UserController::class);
+        Route::delete('/users/unbind/{unbind}', [UserController::class, 'unbinding'])->name('users.unbind');
+        Route::patch('/users/restricted/{restrict}', [UserController::class, 'restricted'])->name('users.restricted');
         
     });
     Route::middleware('can:manage-users-related')->group(function () {
@@ -53,7 +59,7 @@ Route::prefix('panel')->middleware(['auth', 'device.verify'])->group(function ()
     Route::resource('products', ProductController::class);
 
     
-
+});
 
 });
 

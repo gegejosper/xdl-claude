@@ -37,6 +37,9 @@
                         <form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" data-kt-redirect-url="{{ url('/panel/dashboard') }}" method="POST" action="{{ route('login') }}">
                             @csrf
                             <input type="hidden" name="device_id" id="device_id" >   
+                            <input type="hidden" name="device_browser" id="device_browser" > 
+                            <input type="hidden" name="device_os" id="device_os" > 
+                            <input type="hidden" name="device_resolution" id="device_resolution" > 
                             @error('device')
                                 <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
@@ -160,33 +163,83 @@
 
 
 <script>
-  FingerprintJS.load().then(fp => {
-    fp.get().then(result => {
-      document.getElementById('device_id').value = result.visitorId;
-    });
-  });
-</script>
-<script>
-function togglePassword() {
-    const input = document.getElementById('password');
-    const icon  = document.getElementById('toggleIcon');
+async function ensure_device_id() {
+    const device_id_input = document.getElementById('device_id');
 
-    if (input.type === 'password') {
-        input.type = 'text';
+    // stable id per browser (until storage cleared)
+    let device_id = localStorage.getItem('app_device_id');
 
-        // switch to "eye-slash" icon
-        icon.classList.remove('ki-eye-slash');
-        icon.classList.add('ki-eye');
-    } else {
-        input.type = 'password';
-
-        // switch back to "eye" icon
-        icon.classList.remove('ki-eye');
-        icon.classList.add('ki-eye-slash');
+    if (!device_id) {
+        device_id = crypto.randomUUID ? crypto.randomUUID() : (Date.now() + '_' + Math.random());
+        localStorage.setItem('app_device_id', device_id);
     }
-}
-</script>
 
+    device_id_input.value = device_id;
+
+    // optional: keep FingerprintJS for diagnostics only
+    try {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        localStorage.setItem('fp_visitor_id', result.visitorId);
+        // DO NOT overwrite device_id with visitorId
+    } catch (e) {}
+}
+
+function get_device_info(){
+     const user_agent = navigator.userAgent;
+     const platform = navigator.platform;
+
+     let browser ="unknown";
+     let os ="unknown";
+
+     //detect browser
+     if(user_agent.includes("Chrome") && !user_agent.includes("Edg")){
+        browser = "Chrome";
+     }else if(user_agent.includes("Firefox")){
+        browser = "Firefox";
+     }else if(user_agent.includes("Safari") && !user_agent.includes("Chrome")){
+        browser = "Safari";
+     }else if (user_agent.includes("Edg")){
+        browser = "Edge";
+     }
+
+     //Detect OS
+     if(platform.includes("Win")){
+        os = "Windows";
+     }else if(platform.includes("Mac")){
+        os = "MacOs";
+     }else if(platform.includes("Linux")){
+        os = "Linux";
+     }else if(/Android/.test(user_agent)){
+        os = "Android";
+     }else if(/iPhone | iPad | iPod/.test(user_agent)){
+        os = "iOS";
+     }
+
+     return { browser, os };
+}
+function get_screen_resolution(){
+    return screen.width + "x" + screen.height;
+}
+document.addEventListener("DOMContentLoaded", async function () {
+    await ensure_device_id();
+
+    const device_info = get_device_info();
+    const resolution = get_screen_resolution();
+
+    document.getElementById('device_browser').value = device_info.browser;
+    document.getElementById('device_os').value = device_info.os;
+    document.getElementById('device_resolution').value = resolution;
+
+    // AJAX-safe: prevent submit if device_id wasn't set yet
+    const form = document.getElementById('kt_sign_in_form');
+    form.addEventListener('submit', async function () {
+        if (!document.getElementById('device_id').value) {
+            await ensure_device_id();
+        }
+    });
+});
+</script>
 
 @endsection
 

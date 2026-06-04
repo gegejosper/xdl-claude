@@ -97,8 +97,9 @@
 								</th> -->
 								<th class="min-w-125px">User</th>
 								<th class="min-w-125px">Role</th>
-								<th class="min-w-125px">Permissions</th>
-								
+								<th class="min-w-125px">Device Details</th>
+                        		<th class="min-w-125px">Binding</th>
+								<th class="min-w-125px">Restricted</th>
 								<th class="min-w-125px">Status</th>
 								<th class="text-end min-w-100px">Actions</th>
 							</tr>
@@ -131,8 +132,10 @@
 									</td>
 									<td>{{ implode(', ', $user->roles->pluck('name')->toArray()) }}</td>
 									<td>
-										<div class="badge badge-light fw-bold">{{ implode(', ', $user->permissions->pluck('name')->toArray()) }}</div>
+										
 									</td>
+									<td></td>
+									<td></td>
 									<td>{{ $user->status }}</td>
 									<td class="text-end">
 										<a href="#" class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions 
@@ -149,6 +152,32 @@
 												<a href="{{ route('users.edit', $user) }}" class="menu-link px-3">Edit</a>
 											</div>
 											<!--end::Menu item-->
+											<!--begin::Menu item-->
+										@if($user->devices->first())
+										<div class="menu-item px-3">
+											<form action="{{ url('panel/users/unbind/' . optional($user->devices->first())->id) }}" method="POST" style="display:inline;">
+												@csrf
+												@method('DELETE') 
+												<button type="submit" class="menu-link px-3 border-0 bg-transparent kt_unbind_alert">
+													Unbind
+												</button>
+											</form>
+										</div>
+										@endif
+										<!--end::Menu item-->
+										
+										<!--begin::Menu item-->
+										<div class="menu-item px-3">
+											<form action="{{ route('users.restricted', $user->id) }}" method="POST" style="display:inline;">
+												@csrf
+												@method('PATCH')
+												<input type="hidden" id="restrict_msg" value="{{$user->restriction == 'yes' ? 'unrestrected' : 'restricted'}}"/>
+												<button type="submit" class="menu-link px-3 border-0 bg-transparent kt_restrict_alert"> 
+													{{ $user->restriction == 'yes' ? 'Unrestricted' : 'Restricted' }}
+												</button>
+											</form>
+										</div>
+										<!--end::Menu item-->
 										</div>
 										<!--end::Menu-->
 									</td>

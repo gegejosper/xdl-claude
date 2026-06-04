@@ -217,45 +217,6 @@
                             <!--end:Menu link-->
                         </div>
                         <!--end:Menu item-->
-   
-                        <!--begin:Menu item-->
-                        <div data-kt-menu-trigger="click" class="menu-item {{ (request()->segment(2) == 'roles') ? 'here show' : '' }} menu-accordion mb-1">
-                            <!--begin:Menu link-->
-                            <span class="menu-link">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Roles</span>
-                                <span class="menu-arrow"></span>
-                            </span>
-                            <!--end:Menu link-->
-                            <!--begin:Menu sub-->
-                            <div class="menu-sub menu-sub-accordion">
-                                <!--begin:Menu item-->
-                                <div class="menu-item">
-                                    <!--begin:Menu link-->
-                                    <a class="menu-link {{ (request()->segment(2) == 'roled' && request()->segment(3) == null ) ? 'active' : '' }} " href="/panel/roles">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Roles List</span>
-                                    </a>
-                                    <!--end:Menu link-->
-                                    <!--begin:Menu link-->
-                                    <a class="menu-link {{ (request()->segment(2) == 'roles' && request()->segment(3) == 'create' ) ? 'active' : '' }} " href="{{route('roles.create')}}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Create</span>
-                                    </a>
-                                    <!--end:Menu link-->
-                                </div>
-                                <!--end:Menu item-->
-                                
-                            </div>
-                            <!--end:Menu sub-->
-                        </div>
-                        <!--end:Menu item-->
                     </div>
                     <!--end:Menu sub-->
                 </div>

@@ -8,6 +8,8 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\UserDevice;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
@@ -15,7 +17,7 @@ class UserController extends Controller
     public function index()
     {
         $roles = Role::all();
-        $users = User::with('roles','permissions')->paginate(20);
+        $users = User::with('roles','permissions', 'devices')->paginate(20);
         return view('user-management.users.lists', compact('users', 'roles'));
     }
 
@@ -103,5 +105,23 @@ class UserController extends Controller
     {
         $user->delete();
         return redirect()->route('users.index')->with('success','User deleted');
+    }
+    public function unbinding(Request $request, UserDevice $unbind)
+    {
+        // Reset the device ID
+        $unbind->delete();
+        Cache::forget('user_active_device_' . $unbind->user_id);
+        return redirect()->route('users.index')->with('success', 'Unbind Successfully');
+        
+    }
+
+    public function restricted(Request $request, User $restrict)
+    {
+        $restriction = $restrict->restriction == 'yes' ? 'no' : 'yes';
+        $restrict->update([
+            'restriction' => $restriction
+        ]);
+        return redirect()->route('users.index');
+        
     }
 }

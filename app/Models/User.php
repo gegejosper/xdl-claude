@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\UserDevice;
 
 
 class User extends Authenticatable
@@ -25,7 +26,7 @@ class User extends Authenticatable
         'status',
         'email',
         'password',
-        'device_id',
+        'restriction',
     ];
 
     /**
@@ -87,5 +88,11 @@ class User extends Authenticatable
         // return redirect($user->dashboard_route());
         // 
     }
+
+    public function devices()
+    {
+        return $this->hasMany(UserDevice::class);
+    }
+
 
 }
