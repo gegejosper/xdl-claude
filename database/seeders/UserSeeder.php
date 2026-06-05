@@ -17,15 +17,15 @@ class UserSeeder extends Seeder
         //
         //Role::create(['name' => 'superadmin', 'level' => 0]);
         $user = User::create([
-            'name' => 'superadmin',
-            'username' => 'superadmin',
+            'name' => 'superadmin2',
+            'username' => 'superadmin2',
             'status' => 'active',
-            'email' => 'superadmin@gmail.com',
+            'email' => 'superadmin2@gmail.com',
             'password' => bcrypt('password'),
         ]);
 
         // assign single role
-        $role = Role::findOrFail(1);
+        $role = Role::findOrFail(3);
         $user->syncRoles([$role->name]);
     }
 }
