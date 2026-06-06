@@ -14,4 +14,5 @@ class UserDevice extends Model
         'device_resolution',
         'status',
     ];
+    
 }

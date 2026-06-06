@@ -132,10 +132,19 @@
 									</td>
 									<td>{{ implode(', ', $user->roles->pluck('name')->toArray()) }}</td>
 									<td>
-										
+										@if($user->devices->first())
+											{{ optional($user->devices->first())->device_browser}}, {{ optional($user->devices->first())->device_os}}, {{optional($user->devices->first())->device_resolution}}
+										@endif
 									</td>
-									<td></td>
-									<td></td>
+									<td>
+										@if($user->devices->first())
+										<span class="text-success">Bind</span>
+										@else
+											<span class="text-danger">Unbind</span>
+										@endif
+									<td>
+										{{ $user->restriction == 'yes' ? 'Yes' : 'No' }}
+									</td>
 									<td>{{ $user->status }}</td>
 									<td class="text-end">
 										<a href="#" class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions 
@@ -158,7 +167,7 @@
 											<form action="{{ url('panel/users/unbind/' . optional($user->devices->first())->id) }}" method="POST" style="display:inline;">
 												@csrf
 												@method('DELETE') 
-												<button type="submit" class="menu-link px-3 border-0 bg-transparent kt_unbind_alert">
+												<button type="button" class="menu-link px-3 border-0 bg-transparent kt_unbind_alert">
 													Unbind
 												</button>
 											</form>
@@ -172,7 +181,7 @@
 												@csrf
 												@method('PATCH')
 												<input type="hidden" id="restrict_msg" value="{{$user->restriction == 'yes' ? 'unrestrected' : 'restricted'}}"/>
-												<button type="submit" class="menu-link px-3 border-0 bg-transparent kt_restrict_alert"> 
+												<button type="button" class="menu-link px-3 border-0 bg-transparent kt_restrict_alert"> 
 													{{ $user->restriction == 'yes' ? 'Unrestricted' : 'Restricted' }}
 												</button>
 											</form>
@@ -204,6 +213,7 @@
 <script src="{{asset('assets/js/custom/apps/user-management/users/list/add.js')}}"></script>
 <script src="{{asset('assets/js/widgets.bundle.js')}}"></script>
 <script src="{{asset('assets/js/custom/widgets.js')}}"></script>
+<script src="{{asset('assets/js/custom/alert.js')}}"></script>
 <!-- <script src="{{asset('assets/js/custom/apps/chat/chat.js')}}"></script>
 <script src="{{asset('assets/js/custom/utilities/modals/upgrade-plan.js')}}"></script>
 <script src="{{asset('assets/js/custom/utilities/modals/create-app.js')}}"></script>
