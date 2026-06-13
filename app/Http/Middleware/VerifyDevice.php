@@ -7,17 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\UserDevice;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Cache;
 
-class VerifyDevice 
+class VerifyDevice
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
@@ -31,58 +24,59 @@ class VerifyDevice
             return $next($request);
         }
 
-        if($user->restriction=== 'yes')
-        {
-            $cacheKey     = 'user_active_device_' . $user->id;
-            $cachedDevice = Cache::get($cacheKey);
+        // Only enforce device restriction
+        if ($user->restriction === 'yes') {
+
             $sessionDevice = session('device_id');
 
-            // Get user's saved device from database
-            $device = UserDevice::where('user_id', $user->id)->first();
-
-            //  If session device missing → logout
-            if (!$sessionDevice) {
-
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return redirect('/login')
-                    ->with('error', 'Session expired. Please login again.');
+            // No device stored in session
+            if (empty($sessionDevice)) {
+                return $this->logout($request, 'Session device not found.');
             }
 
-            // If no device saved in DB → logout
+            // Verify exact device still exists
+            $device = UserDevice::where('user_id', $user->id)
+                ->where('device_id', $sessionDevice)
+                ->first();
+
+            // Device deleted by admin or no longer exists
             if (!$device) {
 
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
+                Cache::forget('user_active_device_' . $user->id);
 
-                return redirect('/login')
-                    ->with('error', 'No registered device found.');
+                return $this->logout(
+                    $request,
+                    'Your registered device has been removed. Please contact the administrator.'
+                );
             }
 
-            //  Restore cache if expired
+            // Verify cache
+            $cacheKey = 'user_active_device_' . $user->id;
+            $cachedDevice = Cache::get($cacheKey);
+
             if (!$cachedDevice) {
                 Cache::put($cacheKey, $sessionDevice, now()->addDays(30));
-                $cachedDevice = $sessionDevice;
+            } elseif ($cachedDevice !== $sessionDevice) {
+
+                Cache::forget($cacheKey);
+
+                return $this->logout(
+                    $request,
+                    'Device mismatch detected.'
+                );
             }
-
-            //  Compare correctly
-            if (
-                $cachedDevice !== $sessionDevice || $device->device_id !== $sessionDevice) {
-
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return redirect('/login')
-                    ->with('error', 'You have been logged out. Device mismatch detected.');
-            }
-
         }
 
         return $next($request);
     }
 
+    private function logout(Request $request, string $message)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login')->with('error', $message);
+    }
 }

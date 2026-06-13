@@ -11,6 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ProductController;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
+use App\Http\Controllers\BindingDeviceController;
 
 Route::middleware(['web'])->group(function () {
 // Route::get('/', function () {
@@ -48,7 +49,7 @@ Route::middleware('device.verify')->group(function() {
     Route::get('logs', [LogViewerController::class, 'index'])
         ->name('logs.index');
     });
-    });
+});
 
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
 
@@ -57,6 +58,12 @@ Route::middleware('device.verify')->group(function() {
     Route::resource('categories', CategoryController::class);
     Route::resource('subcategories', SubcategoryController::class);
     Route::resource('products', ProductController::class);
+
+    //binding devices
+    Route::group(['prefix' => 'binding_devices'], function () {
+    Route::get('/', [BindingDeviceController::class, 'index'])->name('binding_devices.index');
+    Route::delete('/{bindingDevice}', [BindingDeviceController::class, 'destroy'])->name('binding_devices.destroy');
+    }); 
 
     
 });

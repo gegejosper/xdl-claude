@@ -26,6 +26,11 @@
             <div class="d-flex flex-column-fluid flex-lg-row-auto justify-content-center justify-content-lg-end p-12 p-lg-20">
                 <!--begin::Card-->
                 <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-md-600px p-20">
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif 
                     <!--begin::Wrapper-->
                     <div class="d-flex flex-center flex-column flex-column-fluid px-lg-10 pb-5 pb-lg-10">
                         <!--begin::Form-->
@@ -163,6 +168,24 @@
 
 
 <script>
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const icon = document.getElementById('toggleIcon');
+
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+
+        // Change icon to eye
+        icon.classList.remove('ki-eye-slash');
+        icon.classList.add('ki-eye');
+    } else {
+        passwordField.type = 'password';
+
+        // Change icon to eye-slash
+        icon.classList.remove('ki-eye');
+        icon.classList.add('ki-eye-slash');
+    }
+}
 async function ensure_device_id() {
     const device_id_input = document.getElementById('device_id');
 

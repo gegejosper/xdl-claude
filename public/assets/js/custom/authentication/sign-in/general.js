@@ -78,7 +78,7 @@ var KTSigninGeneral = (function() {
                             }
 
                             if (error.response && error.response.status === 419) {
-                                window.location.href = redirect_url;
+                                window.location.reload();
                             }
 
                             Swal.fire({
