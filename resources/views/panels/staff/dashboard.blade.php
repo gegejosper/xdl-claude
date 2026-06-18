@@ -19,13 +19,13 @@
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <div id="kt_content_container" class="container-xxl">
 
-            {{-- ─── TODAY STATS ─────────────────────────────────────────── --}}
-            <div class="mb-3 fw-bold text-uppercase text-muted fs-8 letter-spacing-wide">
+            {{-- ─── TODAY ────────────────────────────────────────────────── --}}
+            <div class="mb-3 fw-bold text-uppercase text-muted fs-8">
                 <i class="fa fa-sun-o me-1"></i> Today — {{ now()->format('M d, Y') }}
             </div>
             <div class="row g-4 mb-6">
                 <div class="col-6 col-md-3">
-                    <div class="card h-100 border-0" style="background: linear-gradient(135deg,#CC0000,#7f0000)">
+                    <div class="card h-100 border-0" style="background:linear-gradient(135deg,#CC0000,#7f0000)">
                         <div class="card-body text-white">
                             <div class="fs-8 opacity-75 text-uppercase fw-semibold">Orders Today</div>
                             <div class="fs-1 fw-bolder mt-1">{{ $today_orders }}</div>
@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="card h-100 border-0" style="background: linear-gradient(135deg,#AA0000,#660000)">
+                    <div class="card h-100 border-0" style="background:linear-gradient(135deg,#AA0000,#660000)">
                         <div class="card-body text-white">
                             <div class="fs-8 opacity-75 text-uppercase fw-semibold">Sales Today</div>
                             <div class="fs-3 fw-bolder mt-1">₱{{ number_format($today_sales, 2) }}</div>
@@ -43,7 +43,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="card h-100 border-0" style="background: linear-gradient(135deg,#333333,#111111)">
+                    <div class="card h-100 border-0" style="background:linear-gradient(135deg,#333333,#111111)">
                         <div class="card-body text-white">
                             <div class="fs-8 opacity-75 text-uppercase fw-semibold">Collected Today</div>
                             <div class="fs-3 fw-bolder mt-1">₱{{ number_format($today_paid, 2) }}</div>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="card h-100 border-0" style="background: linear-gradient(135deg,#222222,#0d0d0d)">
+                    <div class="card h-100 border-0" style="background:linear-gradient(135deg,#222222,#0d0d0d)">
                         <div class="card-body text-white">
                             <div class="fs-8 opacity-75 text-uppercase fw-semibold">Pending</div>
                             <div class="fs-1 fw-bolder mt-1">{{ $unpaid_orders + $partial_orders }}</div>
@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            {{-- ─── THIS MONTH STATS ────────────────────────────────────── --}}
+            {{-- ─── THIS MONTH ───────────────────────────────────────────── --}}
             <div class="mb-3 fw-bold text-uppercase text-muted fs-8">
                 <i class="fa fa-calendar me-1"></i> This Month — {{ now()->format('F Y') }}
             </div>
@@ -109,7 +109,7 @@
 
             <div class="row g-5 mb-5">
 
-                {{-- ─── DAILY SALES CHART ───────────────────────────────── --}}
+                {{-- ─── DAILY CHART ─────────────────────────────────────── --}}
                 <div class="col-lg-8">
                     <div class="card h-100">
                         <div class="card-header border-0 pt-5">
@@ -125,7 +125,7 @@
                     </div>
                 </div>
 
-                {{-- ─── ORDER STATUS SUMMARY ────────────────────────────── --}}
+                {{-- ─── ORDER STATUS ────────────────────────────────────── --}}
                 <div class="col-lg-4">
                     <div class="card h-100">
                         <div class="card-header border-0 pt-5">
@@ -166,7 +166,6 @@
                                 </div>
                             </div>
 
-                            {{-- Collection rate --}}
                             @if($month_sales > 0)
                             @php $rate = round(($month_collected / $month_sales) * 100, 1); @endphp
                             <div class="mt-5">
@@ -178,7 +177,7 @@
                                 </div>
                                 <div class="progress h-6px">
                                     <div class="progress-bar {{ $rate >= 80 ? 'bg-success' : ($rate >= 50 ? 'bg-warning' : 'bg-danger') }}"
-                                        style="width: {{ min($rate, 100) }}%"></div>
+                                        style="width:{{ min($rate, 100) }}%"></div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-1">
                                     <span class="text-muted fs-8">₱{{ number_format($month_collected, 0) }} collected</span>
@@ -237,7 +236,7 @@
                             @endforeach
                         </div>
                         <div class="card-footer py-3">
-                            <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-light-primary w-100">View All Transactions</a>
+                            <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-light-primary w-100">View All</a>
                         </div>
                     </div>
                 </div>
@@ -276,9 +275,7 @@
                                                     <span class="badge badge-light-danger ms-1 fs-9">Due {{ $txn->deadline->diffForHumans() }}</span>
                                                 @endif
                                             </td>
-                                            <td>
-                                                <span class="fw-semibold">{{ $txn->customer?->last_name }}, {{ $txn->customer?->first_name }}</span>
-                                            </td>
+                                            <td class="fw-semibold">{{ $txn->customer?->last_name }}, {{ $txn->customer?->first_name }}</td>
                                             <td class="fw-bold">₱{{ number_format($txn->total_amount, 2) }}</td>
                                             <td class="{{ $txn->balance > 0 ? 'text-danger' : 'text-success' }} fw-bold">
                                                 ₱{{ number_format($txn->balance, 2) }}
@@ -291,17 +288,14 @@
                                                 }; @endphp
                                                 <span class="badge {{ $pc }}">{{ $txn->payment_status_label }}</span>
                                             </td>
-                                            <td class="pe-4 text-muted fs-7">
-                                                {{ $txn->created_at->format('M d, Y') }}
-                                            </td>
+                                            <td class="pe-4 text-muted fs-7">{{ $txn->created_at->format('M d, Y') }}</td>
                                         </tr>
                                         @empty
                                         <tr>
                                             <td colspan="6" class="text-center py-8 text-muted">
                                                 <i class="fa fa-inbox fs-2 d-block mb-2"></i>
                                                 No job orders yet.
-                                                <br>
-                                                <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-primary mt-3">
+                                                <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-primary mt-3 d-block mx-auto" style="width:fit-content">
                                                     Create First Order
                                                 </a>
                                             </td>
@@ -331,12 +325,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
 $(document).ready(function () {
+    const labels = @json($chart_labels);
+    const sales  = @json($chart_sales);
+    const orders = @json($chart_orders);
 
-    const labels  = @json($chart_labels);
-    const sales   = @json($chart_sales);
-    const orders  = @json($chart_orders);
-
-    if (labels.length === 0) return;
+    if (!labels.length) return;
 
     const ctx = document.getElementById('daily_chart');
     if (!ctx) return;
@@ -349,8 +342,8 @@ $(document).ready(function () {
                 {
                     label:           'Sales (₱)',
                     data:            sales,
-                    backgroundColor: 'rgba(26, 115, 232, 0.7)',
-                    borderColor:     'rgba(26, 115, 232, 1)',
+                    backgroundColor: 'rgba(204,0,0,0.7)',
+                    borderColor:     'rgba(204,0,0,1)',
                     borderWidth:     1,
                     borderRadius:    3,
                     yAxisID:         'y_sales',
@@ -360,7 +353,7 @@ $(document).ready(function () {
                     data:            orders,
                     type:            'line',
                     borderColor:     '#e53935',
-                    backgroundColor: 'rgba(229, 57, 53, 0.1)',
+                    backgroundColor: 'rgba(229,57,53,0.1)',
                     borderWidth:     2,
                     pointRadius:     3,
                     tension:         0.3,
@@ -377,37 +370,30 @@ $(document).ready(function () {
                 legend: { position: 'top' },
                 tooltip: {
                     callbacks: {
-                        label: function (ctx) {
-                            if (ctx.dataset.yAxisID === 'y_sales') {
-                                return ' ₱' + parseFloat(ctx.raw).toLocaleString('en-PH', { minimumFractionDigits: 2 });
-                            }
-                            return ' ' + ctx.raw + ' orders';
-                        }
-                    }
-                }
+                        label: ctx => ctx.dataset.yAxisID === 'y_sales'
+                            ? ' ₱' + parseFloat(ctx.raw).toLocaleString('en-PH', { minimumFractionDigits: 2 })
+                            : ' ' + ctx.raw + ' orders',
+                    },
+                },
             },
             scales: {
                 y_sales: {
-                    type:     'linear',
-                    position: 'left',
+                    type:        'linear',
+                    position:    'left',
                     beginAtZero: true,
-                    ticks: {
-                        callback: v => '₱' + v.toLocaleString()
-                    },
-                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks:       { callback: v => '₱' + v.toLocaleString() },
+                    grid:        { color: 'rgba(0,0,0,0.05)' },
                 },
                 y_orders: {
-                    type:     'linear',
-                    position: 'right',
+                    type:        'linear',
+                    position:    'right',
                     beginAtZero: true,
-                    ticks: { stepSize: 1 },
-                    grid: { drawOnChartArea: false },
+                    ticks:       { stepSize: 1 },
+                    grid:        { drawOnChartArea: false },
                 },
-                x: {
-                    grid: { display: false },
-                }
-            }
-        }
+                x: { grid: { display: false } },
+            },
+        },
     });
 });
 </script>

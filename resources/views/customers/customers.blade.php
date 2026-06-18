@@ -293,9 +293,9 @@
                     <!--begin::Input group-->
                     @csrf
                     <div class="row mb-10">
-                    <div id="errors" hidden></div>
+                        <div id="add_customer_errors" class="d-none mb-3"></div>
                         <!--begin::Row-->
-                        <div class="row fv-row fv-plugins-icon-container">
+                        <div class="row fv-row fv-plugins-icon-container mb-5">
                             <!--begin::Col-->
                             <div class="col-6">
                                 <label class="d-flex align-items-center fs-6 fw-bold form-label mb-2">
@@ -319,8 +319,8 @@
                         </div>
                         <!--end::Row-->
                         <!--begin::Row-->
-                        <div class="row mt-3">
-                            <div class="col-xl-4">
+                        <div class="row mt-3 mb-5">
+                            <!-- <div class="col-xl-4">
                                 <div class="form-group fv-plugins-icon-container">
                                     <label class="d-flex align-items-center fs-6 fw-bold form-label mb-2">
                                         <span class="required">Branch</span>
@@ -341,15 +341,15 @@
                                         
                                     </select>
                                 <div class="fv-plugins-message-container"></div></div>
-                            </div>
-                            <div class="col-xl-4">
+                            </div> -->
+                            <div class="col-xl-8">
                                 <div class="form-group fv-plugins-icon-container">
                                     <label class="d-flex align-items-center fs-6 fw-bold form-label mb-2">
                                         <span class="required">Address</span>
                                         <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="" data-bs-original-title="Customer's address is required" ></i>
                                     </label>
                                     <input type="text" class="form-control form-control-lg form-control-solid" name="address" placeholder="Lot #/ Block #, Etc" id="address" required>
-                                    <span class="form-text text-muted">Please enter your address.</span>
+                                    
                                 <div class="fv-plugins-message-container"></div></div>
                             </div>
                             <div class="col-xl-4">
@@ -359,7 +359,7 @@
                                         <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="" data-bs-original-title="Customer's contact number is required" ></i>
                                     </label>
                                     <input type="text" class="form-control form-control-lg form-control-solid" name="mobile_num" placeholder="0999-999-9999" id="mobile_num" required>
-                                    <span class="form-text text-muted">Please enter contact number.</span>
+                                   
                                 <div class="fv-plugins-message-container"></div></div>
                             </div>
                         </div>
@@ -371,10 +371,13 @@
                                         <span class="required">Province</span>
                                         <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="" data-bs-original-title="Customer's province is required" ></i>
                                     </label>
-                                    <select name="province" id="province" class="form-control form-control-lg form-control-solid" required>
-                                        <option value="0"></option>
-                                        @foreach($provinces as $province)
-                                            <option value="{{$province->provCode}}">{{$province->provDesc}}</option>
+                                    <select name="province" id="province" class="form-control form-control-lg form-control-solid">
+                                        <option value="">-- Select Province --</option>
+                                        @foreach ($provinces as $province)
+                                            <option value="{{ e($province->prov_code) }}"
+                                                {{ $province->prov_code === $default_province ? 'selected' : '' }}>
+                                                {{ e($province->prov_desc) }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 <div class="fv-plugins-message-container"></div></div>
@@ -384,11 +387,19 @@
                                     <span class="sr-only">Loading...</span>
                                 </div>
                                 <div class="form-group fv-plugins-icon-container" id="municipality">
-                                    
-                                    <label class="required">City/Town</label> <br>
-                                    <select name="city_municipality" id="city_municipality" class="form-control form-control-lg form-control-solid" required>
-                                   
-                                    </select>
+                                    <label class="d-flex align-items-center fs-6 fw-bold form-label mb-2">
+                                        <span class="required">City/Municipality</span>
+                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="" data-bs-original-title="Customer's city/municipality is required" ></i>
+                                    </label>
+                                   <select name="city_municipality" id="city_municipality" class="form-control form-control-lg form-control-solid">
+                                    <option value="">-- Select Municipality --</option>
+                                    @foreach ($municipalities as $municipality)
+                                        <option value="{{ e($municipality->citymun_code) }}"
+                                            {{ $municipality->citymun_code === $default_citymun ? 'selected' : '' }}>
+                                            {{ e($municipality->citymun_desc) }}
+                                        </option>
+                                    @endforeach
+                                </select>
                                 <div class="fv-plugins-message-container"></div></div>
                             </div>
                             <div class="col-xl-4">
@@ -396,9 +407,17 @@
                                     <span class="sr-only">Loading...</span>
                                 </div>
                                 <div class="form-group fv-plugins-icon-container" id="div_barangay">
-                                    <label class="required">Barangay</label> <br>
-                                    <select name="barangay" id="barangay" class="form-control form-control-lg form-control-solid" required>
-                                        
+                                    <label class="d-flex align-items-center fs-6 fw-bold form-label mb-2">
+                                        <span class="required">Barangay</span>
+                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="" data-bs-original-title="Customer's barangay is required" ></i>
+                                    </label>
+                                    <select name="barangay" id="barangay" class="form-control form-control-lg form-control-solid">
+                                        <option value="">-- Select Barangay --</option>
+                                        @foreach ($barangays as $barangay)
+                                            <option value="{{ e($barangay->brgy_code) }}">
+                                                {{ e($barangay->brgy_desc) }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 <div class="fv-plugins-message-container"></div></div>
                             </div>
@@ -459,7 +478,7 @@
                     <!--begin::Input group-->
                     @csrf
                     <div class="row mb-10">
-                    <div id="errors" hidden></div>
+                    <div id="edit_customer_errors" class="d-none mb-3"></div>
                         <!--begin::Row-->
                         <div class="row fv-row fv-plugins-icon-container">
                             <!--begin::Col-->
@@ -519,7 +538,7 @@
                                     <select name="edit_province" id="edit_province" class="form-control form-control-lg form-control-solid" required>
                                         <option value="0"></option>
                                         @foreach($provinces as $province)
-                                            <option value="{{$province->provCode}}">{{$province->provDesc}}</option>
+                                            <option value="{{$province->prov_code}}">{{$province->prov_desc}}</option>
                                         @endforeach
                                     </select>
                                 <div class="fv-plugins-message-container"></div></div>
@@ -624,7 +643,7 @@
             </div>
             <div class="modal-footer">
            
-                <button type="button" class="btn btn-light-success btn-sm font-weight-bold closeblock" data-dismiss="modal"> <i class=" fas fa-check"></i> Close</button>
+                <button type="button" class="btn btn-light-success btn-sm font-weight-bold closeblock" data-bs-dismiss="modal"> <i class=" fas fa-check"></i> Close</button>
             </div>
         </div>
     </div>
@@ -746,6 +765,5 @@
         }
     });
 </script>
-<script src="{{asset('js/app.js')}}"></script>  
 <script src="{{asset('assets/js/customers.js')}}"></script>
 @endsection

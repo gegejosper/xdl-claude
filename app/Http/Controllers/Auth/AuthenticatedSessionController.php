@@ -88,8 +88,8 @@ class AuthenticatedSessionController extends Controller
 
         if ($user->hasRole('admin') || $user->hasRole('superadmin')) {
             $redirect_url = '/panel/dashboard/';
-        } elseif ($user->hasRole('cashier')) {
-            $redirect_url = '/panel/cashier';
+        } elseif ($user->hasRole('staff')) {
+            $redirect_url = '/panel/staff/dashboard/';
         } else {
             $redirect_url = '/login';
         }

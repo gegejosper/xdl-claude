@@ -1,5 +1,5 @@
 <!--begin::Header-->
-<div id="kt_header" style="" class="header align-items-stretch">
+<div id="kt_header" style="" class="header align-items-stretch d-print-none">
     <!--begin::Container-->
     <div class="container-fluid d-flex align-items-stretch justify-content-between">
         <!--begin::Aside mobile toggle-->
@@ -19,7 +19,7 @@
         <!--begin::Wrapper-->
         <div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1">
             <!--begin::Navbar-->
-            <div class="d-flex align-items-stretch" id="kt_header_nav">
+            <div class="d-flex align-items-stretch " id="kt_header_nav">
                 <!--begin::Menu wrapper-->
                 <div class="header-menu align-items-stretch" data-kt-drawer="true" data-kt-drawer-name="header-menu" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="end" data-kt-drawer-toggle="#kt_header_menu_mobile_toggle" data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_body', lg: '#kt_header_nav'}">
                     <!--begin::Menu-->

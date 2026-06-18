@@ -1,0 +1,250 @@
+#loading_barangay, #loading_city_municipality {
+    display: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   XDL Brand Colors
+   Red    : #CC0000
+   Dark   : #111111
+   Silver : #C8C8C8
+───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+    --xdl-red:        #CC0000;
+    --xdl-red-hover:  #AA0000;
+    --xdl-red-light:  rgba(204, 0, 0, 0.12);
+    --xdl-red-muted:  rgba(204, 0, 0, 0.08);
+    --xdl-dark:       #111111;
+    --xdl-dark-2:     #1A1A1A;
+    --xdl-dark-3:     #242424;
+    --xdl-silver:     #C8C8C8;
+}
+
+/* ── Sidebar (Aside) ─────────────────────────────────────────────────────── */
+
+#kt_aside {
+    background-color: var(--xdl-dark) !important;
+    border-right: 1px solid #2a2a2a;
+}
+
+.aside-dark .aside-logo {
+    background-color: var(--xdl-dark) !important;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+/* Menu items */
+.aside-dark .menu-item .menu-link:hover:not(.disabled):not(.active) {
+    background-color: var(--xdl-dark-3) !important;
+}
+.aside-dark .menu-item .menu-link:hover .menu-title,
+.aside-dark .menu-item .menu-link:hover .menu-icon,
+.aside-dark .menu-item .menu-link:hover i {
+    color: var(--xdl-red) !important;
+}
+
+/* Active menu item */
+.aside-dark .menu-item .menu-link.active,
+.aside-dark .menu-item.here > .menu-link,
+.aside-dark .menu-item.show > .menu-link {
+    background-color: var(--xdl-red-muted) !important;
+}
+.aside-dark .menu-item .menu-link.active .menu-title,
+.aside-dark .menu-item .menu-link.active .menu-icon,
+.aside-dark .menu-item .menu-link.active i,
+.aside-dark .menu-item.here > .menu-link .menu-title,
+.aside-dark .menu-item.here > .menu-link .menu-icon,
+.aside-dark .menu-item.show > .menu-link .menu-title {
+    color: var(--xdl-red) !important;
+}
+
+/* Bullet dots in sub-menu active state */
+.aside-dark .menu-item .menu-link.active .bullet.bullet-dot,
+.aside-dark .menu-item.here .bullet.bullet-dot {
+    background-color: var(--xdl-red) !important;
+}
+
+/* Sidebar footer (logout area) */
+.aside-footer {
+    background-color: var(--xdl-dark) !important;
+    border-top: 1px solid #2a2a2a;
+}
+
+/* Aside toggle hover */
+.aside-toggle:hover i {
+    color: var(--xdl-red) !important;
+}
+
+/* ── Primary Color Overrides ─────────────────────────────────────────────── */
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--xdl-red) !important;
+    border-color:     var(--xdl-red) !important;
+    color:            #ffffff !important;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--xdl-red-hover) !important;
+    border-color:     var(--xdl-red-hover) !important;
+}
+
+.btn-light-primary {
+    background-color: var(--xdl-red-light) !important;
+    color:            var(--xdl-red) !important;
+    border-color:     transparent !important;
+}
+.btn-light-primary:hover {
+    background-color: var(--xdl-red) !important;
+    color:            #ffffff !important;
+}
+
+/* Text */
+.text-primary { color: var(--xdl-red) !important; }
+a.text-hover-primary:hover { color: var(--xdl-red) !important; }
+
+/* Background */
+.bg-primary { background-color: var(--xdl-red) !important; }
+
+/* Border */
+.border-primary { border-color: var(--xdl-red) !important; }
+
+/* Badges */
+.badge-light-primary {
+    background-color: var(--xdl-red-light) !important;
+    color:            var(--xdl-red) !important;
+}
+.badge.bg-primary { background-color: var(--xdl-red) !important; }
+
+/* Links */
+a:not(.btn):not(.menu-link):not(.nav-link):not(.badge):not(.text-gray-800):not(.text-muted):not(.text-dark) {
+    color: var(--xdl-red);
+}
+a:not(.btn):not(.menu-link):not(.nav-link):not(.badge):hover {
+    color: var(--xdl-red-hover);
+}
+
+/* ── Header nav ──────────────────────────────────────────────────────────── */
+#kt_header {
+    background-color: var(--xdl-dark-2) !important;
+    border-bottom: 1px solid #2a2a2a !important;
+}
+#kt_header .menu-item .menu-link.active,
+#kt_header .menu-item:hover .menu-link {
+    color: var(--xdl-red) !important;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
+#kt_toolbar {
+    background-color: #f9f9f9 !important;
+    border-bottom: 1px solid #e8e8e8 !important;
+}
+
+/* ── Progress bars ───────────────────────────────────────────────────────── */
+.progress-bar.bg-primary { background-color: var(--xdl-red) !important; }
+
+/* ── Forms: focus ring ───────────────────────────────────────────────────── */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--xdl-red) !important;
+    box-shadow: 0 0 0 0.2rem rgba(204, 0, 0, 0.15) !important;
+}
+
+/* ── Select2 ─────────────────────────────────────────────────────────────── */
+.select2-container--default .select2-results__option--highlighted {
+    background-color: var(--xdl-red) !important;
+}
+.select2-container--default .select2-selection--single:focus,
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: var(--xdl-red) !important;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+.nav-line-tabs .nav-item .nav-link.active,
+.nav-line-tabs .nav-item .nav-link:hover {
+    border-bottom-color: var(--xdl-red) !important;
+    color: var(--xdl-red) !important;
+}
+.nav-line-tabs.nav-line-tabs-2x .nav-item .nav-link.active {
+    border-bottom-color: var(--xdl-red) !important;
+}
+.nav-tabs .nav-link.active {
+    color: var(--xdl-red) !important;
+    border-bottom-color: var(--xdl-red) !important;
+}
+
+/* ── Pagination ──────────────────────────────────────────────────────────── */
+.pagination .page-item.active .page-link {
+    background-color: var(--xdl-red) !important;
+    border-color:     var(--xdl-red) !important;
+}
+.pagination .page-item .page-link:hover {
+    color: var(--xdl-red) !important;
+}
+
+/* ── Checkboxes / Switches ───────────────────────────────────────────────── */
+.form-check-input:checked {
+    background-color: var(--xdl-red) !important;
+    border-color:     var(--xdl-red) !important;
+}
+
+/* ── KT custom btn styles ────────────────────────────────────────────────── */
+.btn-custom.btn-primary {
+    background-color: var(--xdl-red) !important;
+    border-color:     var(--xdl-red) !important;
+}
+
+/* ── Dashboard gradient cards — already use inline styles, override via class */
+.card.xdl-grad-red {
+    background: linear-gradient(135deg, var(--xdl-red), #7f0000) !important;
+}
+
+/* ── Scrollbar accent ────────────────────────────────────────────────────── */
+::-webkit-scrollbar-thumb {
+    background-color: #3a3a3a;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--xdl-red);
+}
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* ── Print: remove wrapper padding left by hidden fixed header ───────────── */
+@media print {
+    #kt_header,
+    #kt_aside,
+    #kt_toolbar,
+    #kt_footer,
+    .d-print-none { display: none !important; }
+
+    html, body {
+        padding: 0 !important;
+        margin: 0 !important;
+        background: #fff !important;
+    }
+
+    /* KT sets padding-top on wrapper equal to header height — zero it out */
+    #kt_wrapper,
+    .wrapper {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    #kt_content,
+    .content {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    /* Remove aside offset */
+    #kt_wrapper {
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+    }
+}

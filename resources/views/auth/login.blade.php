@@ -11,12 +11,15 @@
                 <!--begin::Aside-->
                 <div class="d-flex flex-center flex-lg-start flex-column">
                     <!--begin::Logo-->
-                    <a href="/" class="mb-7 fs-1 text-white text-decoration-none">
-                        [ {{config('app.name')}} ]
+                    <a href="/" class="mb-5 text-decoration-none">
+                        <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:2.5rem;letter-spacing:-1px;line-height:1;">
+                            <span style="color:#ffffff;">XAN</span><span style="color:#CC0000;">DOC</span><span style="color:#C8C8C8;">LUY</span>
+                        </span>
                     </a>
                     <!--end::Logo-->
                     <!--begin::Title-->
-                    <h2 class="text-white fw-normal m-0"> [ {{config('app.desc')}} ]</h2>
+                    <div class="text-white fw-semibold fs-5 opacity-75 mt-2">SPORTS APPAREL</div>
+                    <div class="text-white opacity-50 fs-7 mt-1">Order & Payment Management System</div>
                     <!--end::Title-->
                 </div>
                 <!--begin::Aside-->
@@ -35,8 +38,18 @@
                     <div class="d-flex flex-center flex-column flex-column-fluid px-lg-10 pb-5 pb-lg-10">
                         <!--begin::Form-->
                         @auth
-                        <div class="text-center">
-                            <a href="{{auth()->user()->dashboard_route()}}" class="btn btn-lg btn-primary fw-bolder">Go to Dashboard</a>
+                        <div class="text-center d-flex justify-content-center gap-2">
+                            <a href="{{ auth()->user()->dashboard_route() }}"
+                            class="btn btn-lg btn-primary fw-bolder">
+                                Go to Dashboard
+                            </a>
+
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-lg btn-primary fw-bolder">
+                                    Sign Out
+                                </button>
+                            </form>
                         </div>
                         @else
                         <form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" data-kt-redirect-url="{{ url('/panel/dashboard') }}" method="POST" action="{{ route('login') }}">

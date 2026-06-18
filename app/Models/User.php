@@ -79,14 +79,13 @@ class User extends Authenticatable
     public function dashboard_route(): string
     {
         $primary_role = $this->primary_role_name() ?? 'default';
-        return match ( $primary_role) {
-            'superadmin'   => route('admin.dashboard'),
-            'admin' => route('admin.dashboard'),
-            'cashier' => route('cashier.dashboard'),
-            default   => route('home'),
+        return match ($primary_role) {
+            'superadmin' => route('admin.dashboard'),
+            'admin'      => route('admin.dashboard'),
+            'staff'      => route('staff.dashboard'),
+            'cashier'    => route('staff.dashboard'),
+            default      => route('home'),
         };
-        // return redirect($user->dashboard_route());
-        // 
     }
 
     public function devices()
