@@ -58,12 +58,13 @@ class CustomerController extends Controller
     public function add_customer(Request $req){
         $user_id = GlobalHelpers::get_user_id();
         //dd($req);
-        if(isset($req->branch)){
-            $branch_id = $req->branch;   
-        }
-        else {
+        if (isset($req->branch)) {
+            $branch_id = $req->branch;
+        } else {
             $get_branch = BranchUser::where('user_id', $user_id)->first();
-            $branch_id = $get_branch->branch_id; 
+            $branch_id  = $get_branch
+                ? $get_branch->branch_id
+                : Branch::where('status', 'active')->value('id');
         }
         
         $branch = Branch::find($branch_id);

@@ -75,6 +75,11 @@
                                     <td class="fw-bold">₱{{ number_format($exp->amount, 2) }}</td>
                                     <td>{{ $exp->added_by_user?->name ?? '—' }}</td>
                                     <td class="text-end pe-4">
+                                        @php
+                                            $can_edit = Auth::user()->hasRole(['admin', 'superadmin'])
+                                                || ($exp->added_by === Auth::id() && $exp->expense_date->isToday());
+                                        @endphp
+                                        @if($can_edit)
                                         <button class="btn btn-sm btn-icon btn-light-primary btn-edit-expense"
                                             data-id="{{ $exp->id }}"
                                             data-type="{{ $exp->type }}"
@@ -84,6 +89,7 @@
                                             data-remarks="{{ $exp->remarks }}">
                                             <i class="fa fa-edit"></i>
                                         </button>
+                                        @endif
                                         @can('manage-settings')
                                         <button class="btn btn-sm btn-icon btn-light-danger btn-delete-expense"
                                             data-id="{{ $exp->id }}">

@@ -119,8 +119,15 @@ class ExpenseController extends Controller
     {
         $expense = Expense::findOrFail($id);
 
-        if (Auth::user()->hasRole('staff') && $expense->added_by !== Auth::id()) {
-            abort(403);
+        $is_restricted = Auth::user()->hasRole(['staff', 'cashier']);
+
+        if ($is_restricted) {
+            if ($expense->added_by !== Auth::id()) {
+                return response()->json(['errors' => ['general' => 'You can only edit records you added.']], 403);
+            }
+            if (!$expense->expense_date->isToday()) {
+                return response()->json(['errors' => ['general' => 'You can only edit records added today. Past records can only be edited by an Admin.']], 403);
+            }
         }
 
         $validator = Validator::make($request->all(), [
