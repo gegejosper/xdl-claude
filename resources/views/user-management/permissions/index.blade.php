@@ -78,7 +78,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    {{ $permissions->links() }}
+                    {{ $permissions->links('pagination::bootstrap-4') }}
                     <!--end::Table-->
                 </div>
             </div>
