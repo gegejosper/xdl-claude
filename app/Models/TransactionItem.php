@@ -72,7 +72,7 @@ class TransactionItem extends Model
         'sticker_with_laminate',
     ];
 
-    public const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL','KIDS'];
+    public const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXXXL', 'XXXXXL','KIDS'];
 
     // ─── Relationships ────────────────────────────────────────────────────────
 

@@ -167,7 +167,7 @@
                                                 @endif
                                             </td>
                                             <td class="text-end">₱{{ number_format($item->unit_price, 2) }}</td>
-                                            <td class="text-end text-danger">₱{{ number_format($item->discount, 2) }}</td>
+                                            <td class="text-end fw-bold">₱{{ number_format($item->discount, 2) }}</td>
                                             <td class="text-end fw-bold">₱{{ number_format($item->total, 2) }}</td>
                                         </tr>
                                         @if($item->notes)
@@ -181,12 +181,12 @@
                                     <tfoot class="fw-bolder">
                                         <tr>
                                             <td colspan="6" class="text-end">Discount:</td>
-                                            <td class="text-end text-danger">₱{{ number_format($transaction->discount_amount, 2) }}</td>
+                                            <td class="text-end fw-bold">₱{{ number_format($transaction->discount_amount, 2) }}</td>
                                             <td></td>
                                         </tr>
                                         <tr>
                                             <td colspan="7" class="text-end fs-5">Grand Total:</td>
-                                            <td class="text-end fs-5 text-primary">₱{{ number_format($transaction->total_amount, 2) }}</td>
+                                            <td class="text-end fs-5">₱{{ number_format($transaction->total_amount, 2) }}</td>
                                         </tr>
                                     </tfoot>
                                 </table>
