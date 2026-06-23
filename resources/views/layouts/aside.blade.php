@@ -56,6 +56,17 @@
                         <span class="menu-title">Job Orders</span>
                     </a>
                 </div>
+                {{-- Daily Sales --}}
+                <div class="menu-item">
+                    <a href="{{ route('daily-sales.index') }}" class="menu-link {{ (request()->segment(2) == 'daily-sales') ? 'active' : '' }}">
+                        <span class="menu-icon">
+                            <i class="ki-duotone ki-chart-simple fs-2">
+                                <span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span>
+                            </i>
+                        </span>
+                        <span class="menu-title">Daily Sales</span>
+                    </a>
+                </div>
                 <!--end:Menu item-->
                 {{-- Customers --}}
                 <div class="menu-item">
@@ -97,18 +108,7 @@
                 </div>
                 <!--end:Menu item-->
 
-                {{-- Daily Sales --}}
-                <div class="menu-item">
-                    <a href="{{ route('daily-sales.index') }}" class="menu-link {{ (request()->segment(2) == 'daily-sales') ? 'active' : '' }}">
-                        <span class="menu-icon">
-                            <i class="ki-duotone ki-chart-simple fs-2">
-                                <span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span>
-                            </i>
-                        </span>
-                        <span class="menu-title">Daily Sales</span>
-                    </a>
-                </div>
-
+                
                 {{-- Reports --}}
                 <div class="menu-item">
                     <a href="{{ route('reports.outstanding-balances') }}" class="menu-link {{ (request()->segment(2) == 'reports') ? 'active' : '' }}">
