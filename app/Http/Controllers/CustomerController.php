@@ -172,12 +172,13 @@ class CustomerController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        // Summary stats
-        $total_orders     = $transactions->count();
-        $total_amount     = $transactions->sum('total_amount');
-        $total_paid       = $transaction_payments->sum('amount_paid');
-        $total_balance    = $transactions->sum('balance');
-        $unpaid_count     = $transactions->where('payment_status', 'unpaid')->count();
+        // Summary stats — exclude canceled orders from financial totals
+        $active_txns   = $transactions->where('payment_status', '!=', 'canceled');
+        $total_orders  = $transactions->count();
+        $total_amount  = $active_txns->sum('total_amount');
+        $total_paid    = $transaction_payments->sum('amount_paid');
+        $total_balance = $active_txns->sum('balance');
+        $unpaid_count  = $active_txns->where('payment_status', 'unpaid')->count();
 
         $page_name = 'Customer';
         return view('customers.customer', compact(

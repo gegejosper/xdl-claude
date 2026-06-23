@@ -21,7 +21,8 @@ class AdminController extends Controller
             ? Carbon::parse($request->date_to)->endOfDay()
             : Carbon::now()->endOfDay();
 
-        $transactions = Transaction::whereBetween('created_at', [$date_from, $date_to]);
+        $transactions = Transaction::whereBetween('created_at', [$date_from, $date_to])
+            ->where('payment_status', '!=', 'canceled');
 
         $total_sales      = (clone $transactions)->sum('total_amount');
         $total_collected  = (clone $transactions)->with('payments')
@@ -47,6 +48,7 @@ class AdminController extends Controller
         // Daily breakdown for the range (up to 31 days)
         $daily_sales = Transaction::selectRaw('DATE(created_at) as date, SUM(total_amount) as total')
             ->whereBetween('created_at', [$date_from, $date_to])
+            ->where('payment_status', '!=', 'canceled')
             ->groupBy('date')
             ->orderBy('date')
             ->pluck('total', 'date');

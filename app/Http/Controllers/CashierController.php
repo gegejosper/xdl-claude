@@ -32,7 +32,8 @@ class CashierController extends Controller
             $branch_id = null;
         }
 
-        $base = Transaction::when($branch_id, fn($q) => $q->where('branch_id', $branch_id));
+        $base = Transaction::where('payment_status', '!=', 'canceled')
+            ->when($branch_id, fn($q) => $q->where('branch_id', $branch_id));
 
         // ─── Today stats ──────────────────────────────────────────────────
         $today_orders  = (clone $base)->whereDate('created_at', $today)->count();
