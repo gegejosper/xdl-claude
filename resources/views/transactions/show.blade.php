@@ -153,6 +153,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php 
+                                            $total_quantity = 0;
+                                        @endphp
                                         @foreach($transaction->items as $i => $item)
                                         <tr>
                                             <td>{{ $i + 1 }}</td>
@@ -170,6 +173,9 @@
                                                     {{ number_format($item->sqft, 2) }} sq ft
                                                 @else
                                                     {{ $item->quantity }}
+                                                     @php 
+                                                        $total_quantity += $item->quantity;
+                                                    @endphp
                                                 @endif
                                             </td>
                                             <td class="text-end">₱{{ number_format($item->unit_price, 2) }}</td>
@@ -191,7 +197,9 @@
                                             <td></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="7" class="text-end fs-5">Grand Total:</td>
+                                            <td colspan="4" class="text-end fs-5">Total QTY:</td>
+                                            <td class="text-end fs-5">{{$total_quantity}}</td>
+                                            <td colspan="2" class="text-end fs-5">Grand Total:</td>
                                             <td class="text-end fs-5">₱{{ number_format($transaction->total_amount, 2) }}</td>
                                         </tr>
                                     </tfoot>
@@ -225,7 +233,7 @@
                             @endif
 
                             <div class="mt-3 d-flex gap-3 fs-7 text-muted">
-                                <span>File/Layout: <strong>{{ $transaction->has_file_upload ? 'Yes' : 'No' }}</strong></span>
+                                <!-- <span>File/Layout: <strong>{{ $transaction->has_file_upload ? 'Yes' : 'No' }}</strong></span> -->
                                 @if($transaction->is_finalized)
                                 <span class="badge badge-light-dark">FINALIZED {{ $transaction->finalized_at?->format('M d, Y') }}</span>
                                 @endif

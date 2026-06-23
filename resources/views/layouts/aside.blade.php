@@ -42,7 +42,7 @@
                                 <span class="path2"></span>
                             </i>
                         </span>
-                        <span class="menu-title">Dashboard</span>
+                        <span class="menu-title">Dashboard | {{ ucfirst(Auth::user()->primary_role_name())}}</span>
                     </a>
                 </div>
                 {{-- Transactions --}}
