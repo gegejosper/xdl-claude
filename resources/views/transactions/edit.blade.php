@@ -271,6 +271,7 @@
     let item_index = 0;
 
     const SIZED_TYPES = @json(\App\Models\TransactionItem::SIZED_TYPES);
+    const SQFT_TYPES  = @json(\App\Models\TransactionItem::SQFT_TYPES);
     const PRICE_URL   = '{{ url("/panel/item-prices") }}';
 
     // ─── Group existing items by group_id (sized) or treat as standalone ──────
@@ -330,7 +331,7 @@
         const disc  = parseFloat($row.find('.item-discount').val())   || 0;
         let total   = 0;
 
-        if (type === 'tarpaulin') {
+        if (SQFT_TYPES.includes(type)) {
             const w          = parseFloat($row.find('.item-width').val())  || 0;
             const h          = parseFloat($row.find('.item-height').val()) || 0;
             const piece_qty  = parseInt($row.find('.item-qty').val())      || 1;
@@ -376,7 +377,7 @@
         $row.find('.sized-section').addClass('d-none');
         $row.find('.non-sized-section').addClass('d-none');
 
-        if (type === 'tarpaulin') {
+        if (SQFT_TYPES.includes(type)) {
             $row.find('.tarp-section').removeClass('d-none');
         } else if (SIZED_TYPES.includes(type)) {
             $row.find('.sized-section').removeClass('d-none');
@@ -417,7 +418,7 @@
 
             apply_type_sections($row, data.item_type);
 
-            if (data.item_type === 'tarpaulin') {
+            if (SQFT_TYPES.includes(data.item_type)) {
                 $row.find('.item-width').val(data.width    || '');
                 $row.find('.item-height').val(data.height  || '');
                 $row.find('.item-qty').val(data.quantity   || 1);

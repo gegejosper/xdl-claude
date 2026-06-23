@@ -549,7 +549,7 @@ class TransactionController extends Controller
             $discount = (float)($item['discount']   ?? 0);
             $type     = $item['item_type'] ?? '';
 
-            if ($type === 'tarpaulin') {
+            if (in_array($type, TransactionItem::SQFT_TYPES, true)) {
                 $sqft       = (float)($item['width'] ?? 0) * (float)($item['height'] ?? 0);
                 $qty        = max(1, (int)($item['quantity'] ?? 1));
                 $total_sqft = $sqft * $qty;
@@ -582,7 +582,7 @@ class TransactionController extends Controller
             $discount = (float)($item['discount']   ?? 0);
             $type     = $item['item_type'] ?? '';
 
-            if ($type === 'tarpaulin') {
+            if (in_array($type, TransactionItem::SQFT_TYPES, true)) {
                 $qty        = max(1, (int)($item['quantity'] ?? 1));
                 $sqft       = (float)($item['width'] ?? 0) * (float)($item['height'] ?? 0);
                 $total_sqft = $sqft * $qty;
