@@ -97,13 +97,15 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="text-muted fs-8 text-uppercase fw-semibold">Outstanding</div>
-                            <div class="fs-3 fw-bolder text-danger mt-1">₱{{ number_format($month_balance, 2) }}</div>
-                            <div class="text-muted fs-8 mt-1">{{ $inqueue_orders }} in-queue</div>
+                    <a href="/panel/reports/outstanding-balances">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="text-muted fs-8 text-uppercase fw-semibold">Outstanding</div>
+                                <div class="fs-3 fw-bolder text-danger mt-1">₱{{ number_format($month_balance, 2) }}</div>
+                                <div class="text-muted fs-8 mt-1">{{ $inqueue_orders }} in-queue</div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
 

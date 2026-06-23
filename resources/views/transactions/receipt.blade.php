@@ -119,6 +119,13 @@
                             <div class="separator separator-dashed my-2"></div>
 
                             <div class="d-flex justify-content-between mb-1">
+                                <span class="fw-bold">Payment Method</span>
+                                <span class="fw-semibold">
+                                    {{ \App\Models\TransactionPayment::PAYMENT_METHODS[$payment->payment_method] ?? ucfirst($payment->payment_method ?? 'Cash') }}
+                                </span>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-1">
                                 <span class="fw-bold">Amount Paid</span>
                                 <span class="fw-bolder fs-5 text-primary">₱{{ number_format($payment->amount_paid, 2) }}</span>
                             </div>

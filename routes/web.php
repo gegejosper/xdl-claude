@@ -16,6 +16,8 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ItemPriceController;
+use App\Http\Controllers\DailySalesController;
+use App\Http\Controllers\ReportController;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 use App\Http\Controllers\BindingDeviceController;
 use Illuminate\Support\Facades\Auth;
@@ -122,6 +124,19 @@ Route::prefix('panel')->middleware(['auth', 'checkActive'])->group(function () {
     Route::middleware('can:manage-settings')->prefix('item-prices')->name('item_prices.')->group(function () {
         Route::get('/',  [ItemPriceController::class, 'index'])->name('index');
         Route::post('/', [ItemPriceController::class, 'store'])->name('store');
+    });
+
+    // ─── Daily Sales ──────────────────────────────────────────────────────────
+    Route::prefix('daily-sales')->name('daily-sales.')->group(function () {
+        Route::get('/',            [DailySalesController::class, 'index'])->name('index');
+        Route::get('/today-stats', [DailySalesController::class, 'today_stats'])->name('today-stats');
+        Route::get('/{id}',        [DailySalesController::class, 'show'])->name('show');
+        Route::post('/close',      [DailySalesController::class, 'close'])->name('close');
+    });
+
+    // ─── Reports ──────────────────────────────────────────────────────────────
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/outstanding-balances', [ReportController::class, 'outstanding_balances'])->name('outstanding-balances');
     });
 
     // ─── Branches ──────────────────────────────────────────────────────────

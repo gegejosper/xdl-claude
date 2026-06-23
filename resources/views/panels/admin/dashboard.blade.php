@@ -60,13 +60,15 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card text-white" style="background:linear-gradient(135deg,#333333,#111111)">
-                        <div class="card-body">
-                            <div class="fs-7 fw-semibold opacity-75">Outstanding Balance</div>
-                            <div class="fs-2 fw-bolder">₱{{ number_format($total_balance, 2) }}</div>
-                            <div class="fs-8 opacity-75">{{ $unpaid_count }} unpaid · {{ $partial_count }} partial</div>
+                    <a href="/panel/reports/outstanding-balances">
+                        <div class="card text-white" style="background:linear-gradient(135deg,#333333,#111111)">
+                            <div class="card-body">
+                                <div class="fs-7 fw-semibold opacity-75">Outstanding Balance</div>
+                                <div class="fs-2 fw-bolder">₱{{ number_format($total_balance, 2) }}</div>
+                                <div class="fs-8 opacity-75">{{ $unpaid_count }} unpaid · {{ $partial_count }} partial</div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-3">
                     <div class="card text-white" style="background:linear-gradient(135deg,#222222,#111111)">

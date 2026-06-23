@@ -10,10 +10,16 @@
                 </h1>
             </div>
             <div class="d-flex gap-2">
-                @if(!$transaction->is_finalized)
-                <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-sm btn-light-warning">
-                    <i class="fa fa-edit me-1"></i> Edit
-                </a>
+                @if(!$transaction->is_finalized && $transaction->payment_status !== 'canceled')
+                    @if(Auth::user()->hasRole(['admin','superadmin']))
+                    <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-sm btn-light-warning">
+                        <i class="fa fa-edit me-1"></i> Edit
+                    </a>
+                    @elseif(Auth::user()->hasRole(['staff','cashier']))
+                    <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-sm btn-light-info">
+                        <i class="fa fa-plus me-1"></i> Add Items
+                    </a>
+                    @endif
                 @endif
                 @if(!in_array($transaction->payment_status, ['paid', 'canceled']))
                 <button class="btn btn-sm btn-light-success btn-receive-payment"
@@ -265,6 +271,9 @@
                                 <div>
                                     <div class="fw-semibold">₱{{ number_format($pay->amount_paid, 2) }}</div>
                                     <div class="text-muted fs-7">{{ $pay->created_at->format('M d, Y h:i A') }}</div>
+                                    <div class="text-muted fs-8">
+                                        {{ \App\Models\TransactionPayment::PAYMENT_METHODS[$pay->payment_method] ?? ucfirst($pay->payment_method ?? 'Cash') }}
+                                    </div>
                                     @if($pay->change_amount > 0)
                                     <div class="text-muted fs-8">Change: ₱{{ number_format($pay->change_amount, 2) }}</div>
                                     @endif
@@ -300,6 +309,14 @@
             <div class="modal-body">
                 <p>Balance: <strong class="text-danger">₱{{ number_format($transaction->balance, 2) }}</strong></p>
                 <div class="mb-3">
+                    <label class="form-label required fw-semibold">Payment Method</label>
+                    <select id="payment_method" class="form-select">
+                        @foreach(\App\Models\TransactionPayment::PAYMENT_METHODS as $key => $label)
+                        <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label class="form-label required fw-semibold">Amount Received (₱)</label>
                     <input type="number" step="0.01" id="payment_amount" class="form-control" placeholder="0.00">
                 </div>
@@ -332,6 +349,7 @@ $(document).ready(function () {
     // Receive Payment button
     $('.btn-receive-payment').on('click', function () {
         $('#payment_amount').val('');
+        $('#payment_method').val('cash');
         $('#payment_change_row').hide();
         $('#modal_payment').modal('show');
     });
@@ -353,7 +371,7 @@ $(document).ready(function () {
         $.ajax({
             url:    '/panel/transactions/{{ $transaction->id }}/payment',
             method: 'POST',
-            data:   { _token: '{{ csrf_token() }}', amount_paid: $('#payment_amount').val() },
+            data:   { _token: '{{ csrf_token() }}', amount_paid: $('#payment_amount').val(), payment_method: $('#payment_method').val() },
             success: function (res) {
                 if (res.success) {
                     $('#modal_payment').modal('hide');

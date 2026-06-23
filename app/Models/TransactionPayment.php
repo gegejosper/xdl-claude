@@ -8,9 +8,17 @@ class TransactionPayment extends Model
 {
     use \Illuminate\Database\Eloquent\SoftDeletes;
 
+    public const PAYMENT_METHODS = [
+        'cash'          => 'Cash',
+        'gcash'         => 'GCash',
+        'bank_transfer' => 'Bank Transfer',
+        'maya'          => 'Maya',
+        'others'        => 'Others',
+    ];
+
     protected $fillable = [
         'transaction_id', 'customer_id', 'amount_paid',
-        'change_amount', 'status', 'payment_type',
+        'change_amount', 'status', 'payment_type', 'payment_method',
     ];
 
     protected $casts = [

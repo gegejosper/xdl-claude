@@ -96,6 +96,30 @@
                     </a>
                 </div>
                 <!--end:Menu item-->
+
+                {{-- Daily Sales --}}
+                <div class="menu-item">
+                    <a href="{{ route('daily-sales.index') }}" class="menu-link {{ (request()->segment(2) == 'daily-sales') ? 'active' : '' }}">
+                        <span class="menu-icon">
+                            <i class="ki-duotone ki-chart-simple fs-2">
+                                <span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span>
+                            </i>
+                        </span>
+                        <span class="menu-title">Daily Sales</span>
+                    </a>
+                </div>
+
+                {{-- Reports --}}
+                <div class="menu-item">
+                    <a href="{{ route('reports.outstanding-balances') }}" class="menu-link {{ (request()->segment(2) == 'reports') ? 'active' : '' }}">
+                        <span class="menu-icon">
+                            <i class="ki-duotone ki-document fs-2">
+                                <span class="path1"></span><span class="path2"></span>
+                            </i>
+                        </span>
+                        <span class="menu-title">Outstanding Balances</span>
+                    </a>
+                </div>
                 @can('manage-users')
                 <!--begin:Menu item-->
                 <div data-kt-menu-trigger="click" class="menu-item  menu-accordion {{ (request()->segment(2) == 'users' || request()->segment(2) == 'roles' || request()->segment(2) == 'permissions') ? 'here show' : '' }}">

@@ -171,6 +171,14 @@
                 <p class="mb-4">Balance: <strong class="text-danger" id="payment_balance"></strong></p>
                 <input type="hidden" id="payment_txn_id">
                 <div class="mb-3">
+                    <label class="form-label required fw-semibold">Payment Method</label>
+                    <select id="payment_method" class="form-select">
+                        @foreach(\App\Models\TransactionPayment::PAYMENT_METHODS as $key => $label)
+                        <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label class="form-label required fw-semibold">Amount Received (₱)</label>
                     <input type="number" step="0.01" id="payment_amount" class="form-control" placeholder="0.00">
                 </div>
@@ -256,6 +264,7 @@ $(document).ready(function () {
         $('#payment_job_order').text(d.joborder);
         $('#payment_balance').text('₱' + parseFloat(d.balance).toFixed(2));
         $('#payment_amount').val('');
+        $('#payment_method').val('cash');
         $('#payment_change_row').hide();
         $('#modal_payment').modal('show');
     });
@@ -279,8 +288,9 @@ $(document).ready(function () {
             url:    '/panel/transactions/' + id + '/payment',
             method: 'POST',
             data: {
-                _token:      '{{ csrf_token() }}',
-                amount_paid: $('#payment_amount').val(),
+                _token:         '{{ csrf_token() }}',
+                amount_paid:    $('#payment_amount').val(),
+                payment_method: $('#payment_method').val(),
             },
             success: function (res) {
                 if (res.success) {

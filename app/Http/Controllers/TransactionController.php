@@ -194,13 +194,6 @@ class TransactionController extends Controller
 
     public function update(Request $request, int $id)
     {
-        // Duplicate submission guard
-        $token = $request->input('submission_token');
-        if (!$token || session('txn_submission_token') !== $token) {
-            return response()->json(['errors' => ['general' => 'Duplicate submission detected. Please reload the page and try again.']], 422);
-        }
-        session()->forget('txn_submission_token');
-
         $transaction = Transaction::findOrFail($id);
         $this->authorize_transaction_access($transaction);
 
@@ -208,6 +201,83 @@ class TransactionController extends Controller
             return response()->json(['errors' => ['general' => 'Finalized orders cannot be edited.']], 403);
         }
 
+        $is_staff = Auth::user()->hasRole(['staff', 'cashier']);
+        $is_admin = Auth::user()->hasRole(['admin', 'superadmin']);
+
+        // Duplicate submission guard — admin only (staff form has no token)
+        if ($is_admin || !$is_staff) {
+            $token = $request->input('submission_token');
+            if (!$token || session('txn_submission_token') !== $token) {
+                return response()->json(['errors' => ['general' => 'Duplicate submission detected. Please reload the page and try again.']], 422);
+            }
+            session()->forget('txn_submission_token');
+        }
+
+        // Staff can only add new items — they cannot modify header fields
+        if ($is_staff && !$is_admin) {
+            $new_items = collect($request->input('new_items', []));
+
+            if ($new_items->isEmpty()) {
+                return response()->json(['errors' => ['general' => 'No new items to add.']], 422);
+            }
+
+            $validator = Validator::make(['items' => $new_items->toArray()], [
+                'items.*.item_type'  => 'required|string',
+                'items.*.material'   => 'nullable|string|max:100',
+                'items.*.width'      => 'nullable|numeric|min:0',
+                'items.*.height'     => 'nullable|numeric|min:0',
+                'items.*.quantity'   => 'nullable|integer|min:0',
+                'items.*.unit_price' => 'required|numeric|min:0',
+                'items.*.discount'   => 'nullable|numeric|min:0',
+                'items.*.notes'      => 'nullable|string|max:255',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+            DB::beginTransaction();
+            try {
+                $this->save_items($transaction->id, $new_items->toArray());
+
+                // Recalculate totals
+                $all_items    = $transaction->items()->get();
+                $total_amount = $all_items->sum('total');
+                $discount_amount = $all_items->sum('discount');
+                $total_paid   = $transaction->payments()->where('status', 'accepted')->sum('amount_paid');
+                $new_balance  = max(0, $total_amount - $total_paid);
+
+                if ($total_paid <= 0) {
+                    $payment_status = 'unpaid';
+                } elseif ($new_balance > 0) {
+                    $payment_status = 'partial';
+                } else {
+                    $payment_status = 'paid';
+                }
+
+                $transaction->update([
+                    'total_amount'    => $total_amount,
+                    'discount_amount' => $discount_amount,
+                    'balance'         => $new_balance,
+                    'payment_status'  => $payment_status,
+                ]);
+
+                DB::commit();
+                Log::info("Items added to transaction #{$transaction->transaction_number} by staff " . Auth::id());
+
+                return response()->json([
+                    'success'  => true,
+                    'message'  => 'Items added.',
+                    'redirect' => route('transactions.show', $transaction->id),
+                ]);
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                Log::error('Staff item add failed: ' . $e->getMessage());
+                return response()->json(['errors' => ['general' => 'Failed to add items.']], 500);
+            }
+        }
+
+        // Admin / superadmin — full update
         $validator = Validator::make($request->all(), [
             'customer_id'        => 'required|exists:customers,id',
             'note'               => 'nullable|string|max:500',
@@ -234,7 +304,6 @@ class TransactionController extends Controller
         try {
             [$total_amount, $discount_amount] = $this->calculate_items_total($request->items);
 
-            // Recompute balance based on payments already made
             $total_paid  = $transaction->payments()->where('status', 'accepted')->sum('amount_paid');
             $new_balance = max(0, $total_amount - $total_paid);
 
@@ -264,7 +333,7 @@ class TransactionController extends Controller
             $this->save_items($transaction->id, $request->items);
 
             DB::commit();
-            Log::info("Transaction updated: {$transaction->transaction_number} by user " . Auth::id());
+            Log::info("Transaction updated: {$transaction->transaction_number} by admin " . Auth::id());
 
             return response()->json([
                 'success'  => true,
@@ -293,8 +362,11 @@ class TransactionController extends Controller
             return response()->json(['errors' => ['general' => 'This order has been canceled. Payments cannot be received.']], 422);
         }
 
+        $valid_methods = array_keys(TransactionPayment::PAYMENT_METHODS);
+
         $validator = Validator::make($request->all(), [
-            'amount_paid' => 'required|numeric|min:0.01',
+            'amount_paid'    => 'required|numeric|min:0.01',
+            'payment_method' => 'required|in:' . implode(',', $valid_methods),
         ]);
 
         if ($validator->fails()) {
@@ -313,6 +385,7 @@ class TransactionController extends Controller
                 'change_amount'  => $change_amount,
                 'status'         => 'accepted',
                 'payment_type'   => 'payment',
+                'payment_method' => $request->payment_method,
             ]);
 
             $transaction->recalculate_balance();
