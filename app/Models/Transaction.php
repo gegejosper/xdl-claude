@@ -35,13 +35,13 @@ class Transaction extends Model
         'unpaid'   => 'Unpaid',
         'partial'  => 'Partially Paid',
         'paid'     => 'Paid',
+        'canceled' => 'Canceled',
     ];
 
     public const CLAIM_STATUS = [
         'in-queue' => 'In Queue',
         'ready'    => 'Ready',
         'claimed'  => 'Claimed',
-        'canceled' => 'Canceled',
     ];
 
     // ─── Relationships ────────────────────────────────────────────────────────
@@ -90,6 +90,11 @@ class Transaction extends Model
 
     public function recalculate_balance(): void
     {
+        // Do not override a manually-canceled order.
+        if ($this->payment_status === 'canceled') {
+            return;
+        }
+
         $total_paid = $this->payments()
             ->where('status', 'accepted')
             ->sum('amount_paid');

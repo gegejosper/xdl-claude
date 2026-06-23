@@ -15,7 +15,7 @@
                     <i class="fa fa-edit me-1"></i> Edit
                 </a>
                 @endif
-                @if($transaction->payment_status !== 'paid')
+                @if(!in_array($transaction->payment_status, ['paid', 'canceled']))
                 <button class="btn btn-sm btn-light-success btn-receive-payment"
                     data-id="{{ $transaction->id }}"
                     data-balance="{{ $transaction->balance }}"
@@ -26,15 +26,20 @@
                 <button class="btn btn-sm btn-light-primary" onclick="window.print()">
                     <i class="fa fa-print me-1"></i> Print
                 </button>
-                @if(Auth::user()->hasRole('admin'))
-                    @if(!$transaction->approved_by)
+                @if(Auth::user()->hasRole(['admin', 'superadmin']))
+                    @if(!$transaction->approved_by && $transaction->payment_status !== 'canceled')
                     <button class="btn btn-sm btn-light-info" id="btn_approve">
                         <i class="fa fa-check me-1"></i> Approve
                     </button>
                     @endif
-                    @if($transaction->approved_by && !$transaction->is_finalized)
+                    @if($transaction->approved_by && !$transaction->is_finalized && $transaction->payment_status !== 'canceled')
                     <button class="btn btn-sm btn-dark" id="btn_finalize">
                         <i class="fa fa-lock me-1"></i> Final
+                    </button>
+                    @endif
+                    @if($transaction->payment_status !== 'canceled' && $transaction->payment_status !== 'paid')
+                    <button class="btn btn-sm btn-light-danger" id="btn_cancel_order">
+                        <i class="fa fa-ban me-1"></i> Cancel Order
                     </button>
                     @endif
                 @endif
@@ -85,9 +90,10 @@
                                     <label class="form-label text-muted fw-semibold">Payment Status</label>
                                     @php
                                         $pay_class = match($transaction->payment_status) {
-                                            'paid'    => 'badge-light-success',
-                                            'partial' => 'badge-light-warning',
-                                            default   => 'badge-light-danger',
+                                            'paid'     => 'badge-light-success',
+                                            'partial'  => 'badge-light-warning',
+                                            'canceled' => 'badge-light-dark',
+                                            default    => 'badge-light-danger',
                                         };
                                     @endphp
                                     <div><span class="badge {{ $pay_class }} fs-7">{{ $transaction->payment_status_label }}</span></div>
@@ -96,10 +102,9 @@
                                     <label class="form-label text-muted fw-semibold">Claim Status</label>
                                     @php
                                         $claim_class = match($transaction->claim_status) {
-                                            'ready'    => 'badge-light-warning',
-                                            'claimed'  => 'badge-light-success',
-                                            'canceled' => 'badge-light-danger',
-                                            default    => 'badge-light-info',
+                                            'ready'   => 'badge-light-warning',
+                                            'claimed' => 'badge-light-success',
+                                            default   => 'badge-light-info',
                                         };
                                     @endphp
                                     <div><span class="badge {{ $claim_class }} fs-7">{{ $transaction->claim_status_label }}</span></div>
@@ -403,6 +408,39 @@ $(document).ready(function () {
                     confirmButtonText: 'OK',
                 });
             },
+        });
+    });
+
+    // Cancel Order
+    $('#btn_cancel_order').on('click', function () {
+        Swal.fire({
+            icon:               'warning',
+            title:              'Cancel this order?',
+            text:               'This will mark the order as Canceled. Payments can no longer be received.',
+            showCancelButton:   true,
+            confirmButtonText:  'Yes, Cancel Order',
+            cancelButtonText:   'Go Back',
+            confirmButtonColor: '#f1416c',
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+            const $btn = $('#btn_cancel_order').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Canceling...');
+            $.ajax({
+                url:    '/panel/transactions/{{ $transaction->id }}/cancel',
+                method: 'POST',
+                data:   { _token: '{{ csrf_token() }}' },
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire({ icon: 'success', title: 'Order Canceled', timer: 1200, showConfirmButton: false })
+                            .then(() => location.reload());
+                    }
+                },
+                error: function (xhr) {
+                    const errs = xhr.responseJSON?.errors ?? {};
+                    const msg  = Object.values(errs).flat().join('\n');
+                    Swal.fire({ icon: 'error', title: 'Failed', text: msg || 'An unexpected error occurred.', confirmButtonText: 'OK' });
+                    $btn.prop('disabled', false).html('<i class="fa fa-ban me-1"></i> Cancel Order');
+                },
+            });
         });
     });
 

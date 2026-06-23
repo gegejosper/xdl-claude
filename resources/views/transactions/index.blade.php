@@ -103,23 +103,22 @@
                                     <td>
                                         @php
                                             $pay_class = match($txn->payment_status) {
-                                                'paid'    => 'badge-light-success',
-                                                'partial' => 'badge-light-warning',
-                                                default   => 'badge-light-danger',
+                                                'paid'     => 'badge-light-success',
+                                                'partial'  => 'badge-light-warning',
+                                                'canceled' => 'badge-light-dark',
+                                                default    => 'badge-light-danger',
                                             };
                                         @endphp
                                         <span class="badge {{ $pay_class }}">{{ $txn->payment_status_label }}</span>
                                     </td>
                                     <td>
-                                        @php
-                                            $claim_class = match($txn->claim_status) {
-                                                'ready'    => 'badge-light-warning',
-                                                'claimed'  => 'badge-light-success',
-                                                'canceled' => 'badge-light-danger',
-                                                default    => 'badge-light-info',
-                                            };
-                                        @endphp
-                                        <span class="badge {{ $claim_class }}">{{ $txn->claim_status_label }}</span>
+                                        <select class="claim-status-select claim-{{ $txn->claim_status }}"
+                                            data-id="{{ $txn->id }}"
+                                            data-current="{{ $txn->claim_status }}">
+                                            @foreach(\App\Models\Transaction::CLAIM_STATUS as $k => $v)
+                                                <option value="{{ $k }}" {{ $txn->claim_status === $k ? 'selected' : '' }}>{{ $v }}</option>
+                                            @endforeach
+                                        </select>
                                     </td>
                                     <td class="text-end pe-4">
                                         <a href="{{ route('transactions.show', $txn->id) }}"
@@ -132,7 +131,7 @@
                                             <i class="fa fa-edit"></i>
                                         </a>
                                         @endif
-                                        @if($txn->payment_status !== 'paid')
+                                        @if(!in_array($txn->payment_status, ['paid', 'canceled']))
                                         <button class="btn btn-sm btn-icon btn-light-success btn-receive-payment"
                                             data-id="{{ $txn->id }}"
                                             data-balance="{{ $txn->balance }}"
@@ -190,8 +189,63 @@
 @endsection
 
 @section('jslinks')
+<style>
+.claim-status-select {
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    padding: 3px 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    appearance: auto;
+}
+.claim-status-select.claim-in-queue  { background: #e8f4fd; color: #0d6efd; }
+.claim-status-select.claim-ready     { background: #fff3cd; color: #856404; }
+.claim-status-select.claim-claimed   { background: #d1e7dd; color: #0f5132; }
+.claim-status-select.claim-canceled  { background: #f8d7da; color: #842029; }
+.claim-status-select:disabled        { opacity: 0.6; cursor: not-allowed; }
+</style>
 <script>
 $(document).ready(function () {
+
+    // Inline claim status update
+    $(document).on('change', '.claim-status-select', function () {
+        const $sel    = $(this);
+        const id      = $sel.data('id');
+        const prev    = $sel.data('current');
+        const status  = $sel.val();
+
+        $sel.prop('disabled', true);
+
+        $.ajax({
+            url:    '/panel/transactions/' + id + '/claim',
+            method: 'POST',
+            data:   { _token: '{{ csrf_token() }}', claim_status: status },
+            success: function (res) {
+                if (res.success) {
+                    $sel.data('current', status)
+                        .removeClass('claim-in-queue claim-ready claim-claimed claim-canceled')
+                        .addClass('claim-' + status);
+                    Swal.fire({
+                        icon: 'success', title: 'Status Updated',
+                        timer: 1200, showConfirmButton: false,
+                        toast: true, position: 'top-end',
+                    });
+                }
+            },
+            error: function (xhr) {
+                $sel.val(prev); // revert
+                const errs = xhr.responseJSON?.errors ?? {};
+                const msg  = Object.values(errs).flat().join('\n');
+                Swal.fire({ icon: 'error', title: 'Update Failed',
+                    text: msg || 'An unexpected error occurred.', confirmButtonText: 'OK' });
+            },
+            complete: function () {
+                $sel.prop('disabled', false);
+            },
+        });
+    });
 
     let current_balance = 0;
 
@@ -203,7 +257,6 @@ $(document).ready(function () {
         $('#payment_balance').text('₱' + parseFloat(d.balance).toFixed(2));
         $('#payment_amount').val('');
         $('#payment_change_row').hide();
-        $('#payment_errors').addClass('d-none');
         $('#modal_payment').modal('show');
     });
 

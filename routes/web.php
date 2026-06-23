@@ -99,6 +99,7 @@ Route::prefix('panel')->middleware(['auth', 'checkActive'])->group(function () {
         Route::post('/{id}/approve',  [TransactionController::class, 'approve'])->name('approve');
         Route::post('/{id}/finalize', [TransactionController::class, 'finalize'])->name('finalize');
         Route::post('/{id}/claim',    [TransactionController::class, 'update_claim'])->name('claim');
+        Route::post('/{id}/cancel',   [TransactionController::class, 'cancel_order'])->name('cancel');
     });
 
     // ─── Expenses & Purchases ──────────────────────────────────────────────

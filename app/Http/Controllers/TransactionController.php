@@ -289,6 +289,10 @@ class TransactionController extends Controller
             return response()->json(['errors' => ['general' => 'Order is already fully paid.']], 422);
         }
 
+        if ($transaction->payment_status === 'canceled') {
+            return response()->json(['errors' => ['general' => 'This order has been canceled. Payments cannot be received.']], 422);
+        }
+
         $validator = Validator::make($request->all(), [
             'amount_paid' => 'required|numeric|min:0.01',
         ]);
@@ -404,7 +408,7 @@ class TransactionController extends Controller
         $this->authorize_transaction_access($transaction);
 
         $validator = Validator::make($request->all(), [
-            'claim_status' => 'required|in:in-queue,ready,claimed,canceled',
+            'claim_status' => 'required|in:in-queue,ready,claimed',
         ]);
 
         if ($validator->fails()) {
@@ -422,6 +426,38 @@ class TransactionController extends Controller
         }
 
         return response()->json(['success' => true, 'message' => 'Claim status updated.']);
+    }
+
+    // ─── Cancel Order ─────────────────────────────────────────────────────────
+
+    public function cancel_order(int $id)
+    {
+        if (!Auth::user()->hasRole(['admin', 'superadmin'])) {
+            return response()->json(['errors' => ['general' => 'Unauthorized.']], 403);
+        }
+
+        $transaction = Transaction::findOrFail($id);
+
+        if ($transaction->payment_status === 'paid') {
+            return response()->json(['errors' => ['general' => 'Cannot cancel an order that is already fully paid.']], 422);
+        }
+
+        if ($transaction->payment_status === 'canceled') {
+            return response()->json(['errors' => ['general' => 'Order is already canceled.']], 422);
+        }
+
+        DB::beginTransaction();
+        try {
+            $transaction->update(['payment_status' => 'canceled']);
+            DB::commit();
+            Log::info(Auth::user()->name . " canceled order #{$transaction->transaction_number}");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Cancel order failed: ' . $e->getMessage());
+            return response()->json(['errors' => ['general' => 'Failed to cancel order.']], 500);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Order canceled.']);
     }
 
     // ─── Payment Receipt ──────────────────────────────────────────────────────

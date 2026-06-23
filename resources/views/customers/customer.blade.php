@@ -172,18 +172,18 @@
                                                     </td>
                                                     <td>
                                                         @php $pc = match($txn->payment_status) {
-                                                            'paid'    => 'badge-light-success',
-                                                            'partial' => 'badge-light-warning',
-                                                            default   => 'badge-light-danger',
+                                                            'paid'     => 'badge-light-success',
+                                                            'partial'  => 'badge-light-warning',
+                                                            'canceled' => 'badge-light-dark',
+                                                            default    => 'badge-light-danger',
                                                         }; @endphp
                                                         <span class="badge {{ $pc }}">{{ $txn->payment_status_label }}</span>
                                                     </td>
                                                     <td>
                                                         @php $cc = match($txn->claim_status) {
-                                                            'ready'    => 'badge-light-warning',
-                                                            'claimed'  => 'badge-light-success',
-                                                            'canceled' => 'badge-light-danger',
-                                                            default    => 'badge-light-info',
+                                                            'ready'   => 'badge-light-warning',
+                                                            'claimed' => 'badge-light-success',
+                                                            default   => 'badge-light-info',
                                                         }; @endphp
                                                         <span class="badge {{ $cc }}">{{ $txn->claim_status_label }}</span>
                                                     </td>
@@ -192,7 +192,7 @@
                                                             class="btn btn-sm btn-icon btn-light-primary" title="View">
                                                             <i class="fa fa-eye"></i>
                                                         </a>
-                                                        @if($txn->payment_status !== 'paid')
+                                                        @if(!in_array($txn->payment_status, ['paid', 'canceled']))
                                                         <button class="btn btn-sm btn-icon btn-light-success btn-inline-payment"
                                                             data-id="{{ $txn->id }}"
                                                             data-balance="{{ $txn->balance }}"
