@@ -18,9 +18,16 @@
                     data-customer_address="{{ $customer->address }}">
                     <i class="fa fa-edit me-1"></i> Edit
                 </button>
-                <a href="{{ route('transactions.create') }}?customer_id={{ $customer->id }}" class="btn btn-sm btn-primary">
-                    <i class="fa fa-plus me-1"></i> New Job Order
+               
+                @if(!$today_closed)
+                <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-primary">
+                    <i class="fa fa-plus"></i> New Job Order
                 </a>
+                @else
+                <span class="btn btn-sm btn-secondary disabled">
+                    <i class="fa fa-lock me-1"></i> Sales Closed
+                </span>
+                @endif
                 <a href="{{ route('customers.show_customers') }}" class="btn btn-sm btn-light">
                     <i class="fa fa-arrow-left me-1"></i> Back
                 </a>

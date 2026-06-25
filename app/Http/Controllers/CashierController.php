@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
 use App\Models\BranchUser;
+use App\Models\DailySales;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -20,7 +21,11 @@ class CashierController extends Controller
         $month_start = Carbon::now()->startOfMonth();
         $month_end   = Carbon::now()->endOfMonth();
         $user_id   = Auth::id();
-
+        $branch_user  = BranchUser::where('user_id', Auth::id())->first();
+        $today_closed = $branch_user
+            ? DailySales::where('branch_id', $branch_user->branch_id)
+                ->where('sales_date', Carbon::today())->exists()
+            : false;
         // Safe branch lookup — table may not be migrated yet
         $branch_id = null;
         try {
@@ -106,7 +111,7 @@ class CashierController extends Controller
             'month_orders', 'month_sales', 'month_collected', 'month_balance',
             'unpaid_orders', 'partial_orders', 'inqueue_orders',
             'chart_labels', 'chart_sales', 'chart_orders',
-            'upcoming_deadlines', 'recent_orders'
+            'upcoming_deadlines', 'recent_orders', 'today_closed'
         ));
     }
 }

@@ -8,9 +8,18 @@
                 <h1 class="d-flex align-items-center text-dark fw-bolder fs-3 my-1">Transactions</h1>
             </div>
             <div class="d-flex align-items-center gap-2">
+                <!-- <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-primary">
+                    <i class="fa fa-plus"></i> New Job Order
+                </a> -->
+                @if(!$today_closed)
                 <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-primary">
                     <i class="fa fa-plus"></i> New Job Order
                 </a>
+                @else
+                <span class="btn btn-sm btn-secondary disabled">
+                    <i class="fa fa-lock me-1"></i> Sales Closed
+                </span>
+                @endif
             </div>
         </div>
     </div>

@@ -8,6 +8,7 @@ use App\Models\TransactionItem;
 use App\Models\TransactionPayment;
 use App\Models\Customer;
 use App\Models\Branch;
+use App\Models\DailySales;
 use App\Models\BranchUser;
 use App\Helpers\GlobalHelpers;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,11 @@ class TransactionController extends Controller
 
     public function index(Request $request)
     {
+        $branch_user  = BranchUser::where('user_id', Auth::id())->first();
+        $today_closed = $branch_user
+            ? DailySales::where('branch_id', $branch_user->branch_id)
+                ->where('sales_date', Carbon::today())->exists()
+            : false;
         $query = Transaction::with(['customer', 'cashier', 'branch'])
             ->when(Auth::user()->hasRole('staff'), function ($q) {
                 $branch_user = BranchUser::where('user_id', Auth::id())->first();
@@ -54,7 +60,7 @@ class TransactionController extends Controller
         $transactions = $query->latest()->paginate(25)->withQueryString();
 
         $page_name = 'Transactions';
-        return view('transactions.index', compact('transactions', 'page_name'));
+        return view('transactions.index', compact('transactions', 'page_name', 'today_closed'));
     }
 
     // ─── Create ───────────────────────────────────────────────────────────────
@@ -82,7 +88,15 @@ class TransactionController extends Controller
             return response()->json(['errors' => ['general' => 'Duplicate submission detected. Please reload the page and try again.']], 422);
         }
         session()->forget('txn_submission_token');
-
+        $branch_user_check = BranchUser::where('user_id', Auth::id())->first();
+        if ($branch_user_check) {
+            $already_closed = DailySales::where('branch_id', $branch_user_check->branch_id)
+                ->where('sales_date', Carbon::today())
+                ->exists();
+            if ($already_closed) {
+                return response()->json(['errors' => ['general' => 'Today\'s sales have already been closed. No new job orders can be created for today.']], 422);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'customer_id'        => 'required|exists:customers,id',
             'note'               => 'nullable|string|max:500',
@@ -360,6 +374,15 @@ class TransactionController extends Controller
 
         if ($transaction->payment_status === 'canceled') {
             return response()->json(['errors' => ['general' => 'This order has been canceled. Payments cannot be received.']], 422);
+        }
+        // Block payments if today's sales are closed
+        $pay_branch_user = BranchUser::where('user_id', Auth::id())->first();
+        if ($pay_branch_user) {
+            $sales_closed = DailySales::where('branch_id', $pay_branch_user->branch_id)
+                ->where('sales_date', Carbon::today())->exists();
+            if ($sales_closed) {
+                return response()->json(['errors' => ['general' => 'Today\'s sales have been closed. No payments can be recorded.']], 422);
+            }
         }
 
         $valid_methods = array_keys(TransactionPayment::PAYMENT_METHODS);

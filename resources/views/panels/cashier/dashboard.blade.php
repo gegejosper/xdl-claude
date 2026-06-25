@@ -10,9 +10,15 @@
                 </h1>
                 <span class="text-muted fs-7">{{ now()->format('l, F d Y') }}</span>
             </div>
-            <a href="{{ route('transactions.create') }}" class="btn btn-primary">
-                <i class="fa fa-plus me-1"></i> New Job Order
+            @if(!$today_closed)
+            <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-primary">
+                <i class="fa fa-plus"></i> New Job Order
             </a>
+            @else
+            <span class="btn btn-sm btn-secondary disabled">
+                <i class="fa fa-lock me-1"></i> Sales Closed
+            </span>
+            @endif
         </div>
     </div>
 

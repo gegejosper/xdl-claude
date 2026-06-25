@@ -74,7 +74,78 @@
                 </div>
             </div>
             @endif
-
+            {{-- Payment History --}}
+            <div class="card mb-5">
+                <div class="card-header">
+                    <h3 class="card-title fw-bold">Payment History</h3>
+                    <div class="card-toolbar">
+                        <span class="badge badge-light-info fs-7">{{ $payments->total() }} record(s)</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-row-dashed align-middle mb-0">
+                            <thead>
+                                <tr class="fw-bold text-muted fs-7 text-uppercase">
+                                    <th class="ps-5">Date & Time</th>
+                                    <th>Job Order</th>
+                                    <th>Customer</th>
+                                    <th>Method</th>
+                                    <th class="text-end">Amount Paid</th>
+                                    <th class="text-end pe-5">Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $method_badge = [
+                                        'cash'          => 'badge-light-success',
+                                        'gcash'         => 'badge-light-primary',
+                                        'bank_transfer' => 'badge-light-info',
+                                        'maya'          => 'badge-light-warning',
+                                        'check'         => 'badge-light-secondary',
+                                        'others'        => 'badge-light-dark',
+                                    ];
+                                    $payment_methods = \App\Models\TransactionPayment::PAYMENT_METHODS;
+                                @endphp
+                                @forelse($payments as $pay)
+                                <tr>
+                                    <td class="ps-5 text-muted fs-7">{{ $pay->created_at->format('M d, Y h:i A') }}</td>
+                                    <td>
+                                        @if($pay->transaction)
+                                        <a href="{{ route('transactions.show', $pay->transaction_id) }}" class="fw-semibold text-primary">
+                                            {{ $pay->transaction->transaction_number }}
+                                        </a>
+                                        @else
+                                        <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($pay->transaction?->customer)
+                                            {{ $pay->transaction->customer->last_name }}, {{ $pay->transaction->customer->first_name }}
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @php $m = $pay->payment_method ?? 'cash'; @endphp
+                                        <span class="badge {{ $method_badge[$m] ?? 'badge-light' }}">
+                                            {{ $payment_methods[$m] ?? ucfirst($m) }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end fw-bold text-success">₱{{ number_format($pay->amount_paid, 2) }}</td>
+                                    <td class="text-end pe-5 text-muted">₱{{ number_format($pay->change_amount ?? 0, 2) }}</td>
+                                </tr>
+                                @empty
+                                <tr><td colspan="6" class="text-center text-muted py-6">No payments recorded.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @if($payments->hasPages())
+                <div class="card-footer">{{ $payments->links() }}</div>
+                @endif
+            </div>
             {{-- History table --}}
             <div class="card">
                 <div class="card-header"><h3 class="card-title fw-bold">Sales History</h3></div>

@@ -10,6 +10,7 @@ use App\Models\Province;
 use App\Models\Citymunicipality;
 use App\Models\Barangay;
 use App\Models\Branch;
+use App\Models\DailySales;
 use App\Models\BranchUser;
 use Response;
 use Validator;
@@ -179,12 +180,16 @@ class CustomerController extends Controller
         $total_paid    = $transaction_payments->sum('amount_paid');
         $total_balance = $active_txns->sum('balance');
         $unpaid_count  = $active_txns->where('payment_status', 'unpaid')->count();
-
+        $branch_user  = BranchUser::where('user_id', Auth::user()->id)->first();
+        $today_closed = $branch_user
+            ? DailySales::where('branch_id', $branch_user->branch_id)
+                ->where('sales_date', Carbon::today())->exists()
+            : false;
         $page_name = 'Customer';
         return view('customers.customer', compact(
             'page_name', 'customer', 'provinces',
             'transactions', 'transaction_payments',
-            'total_orders', 'total_amount', 'total_paid', 'total_balance', 'unpaid_count'
+            'total_orders', 'total_amount', 'total_paid', 'total_balance', 'unpaid_count', 'today_closed'
         ));
     }
 

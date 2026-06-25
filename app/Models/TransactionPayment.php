@@ -12,6 +12,7 @@ class TransactionPayment extends Model
         'cash'          => 'Cash',
         'gcash'         => 'GCash',
         'bank_transfer' => 'Bank Transfer',
+        'check'         => 'Check',
         'maya'          => 'Maya',
         'others'        => 'Others',
     ];

@@ -76,6 +76,84 @@
                 </div>
             </div>
 
+            {{-- Payments made on this day --}}
+            <div class="card mb-5">
+                <div class="card-header">
+                    <h3 class="card-title fw-bold">Payments Made on This Day</h3>
+                    <div class="card-toolbar">
+                        <span class="badge badge-light-info fs-7">{{ $daily_payments->count() }} payment(s)</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-row-dashed align-middle mb-0">
+                            <thead>
+                                <tr class="fw-bold text-muted fs-7 text-uppercase">
+                                    <th class="ps-5">#</th>
+                                    <th>Job Order</th>
+                                    <th>Customer</th>
+                                    <th>Method</th>
+                                    <th class="text-end">Amount Paid</th>
+                                    <th class="text-end">Change</th>
+                                    <th class="text-end pe-5">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $payment_methods = \App\Models\TransactionPayment::PAYMENT_METHODS;
+                                    $method_badge = [
+                                        'cash'          => 'badge-light-success',
+                                        'gcash'         => 'badge-light-primary',
+                                        'bank_transfer' => 'badge-light-info',
+                                        'maya'          => 'badge-light-warning',
+                                        'check'         => 'badge-light-secondary',
+                                        'others'        => 'badge-light-dark',
+                                    ];
+                                @endphp
+                                @forelse($daily_payments as $pay)
+                                <tr>
+                                    <td class="ps-5 text-muted fs-7">{{ $loop->iteration }}</td>
+                                    <td>
+                                        <a href="{{ route('transactions.show', $pay->transaction_id) }}" class="fw-semibold text-primary">
+                                            {{ $pay->transaction->transaction_number ?? '#'.$pay->transaction_id }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @if($pay->transaction?->customer)
+                                            {{ $pay->transaction->customer->last_name }}, {{ $pay->transaction->customer->first_name }}
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @php $m = $pay->payment_method ?? 'cash'; @endphp
+                                        <span class="badge {{ $method_badge[$m] ?? 'badge-light' }}">
+                                            {{ $payment_methods[$m] ?? ucfirst($m) }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end fw-bold text-success">₱{{ number_format($pay->amount_paid, 2) }}</td>
+                                    <td class="text-end text-muted">₱{{ number_format($pay->change_amount ?? 0, 2) }}</td>
+                                    <td class="text-end pe-5 text-muted fs-7">{{ $pay->created_at->format('h:i A') }}</td>
+                                </tr>
+                                @empty
+                                <tr><td colspan="7" class="text-center text-muted py-6">No payments recorded on this day.</td></tr>
+                                @endforelse
+                            </tbody>
+                            @if($daily_payments->count() > 0)
+                            <tfoot>
+                                <tr class="fw-bold bg-light-subtle">
+                                    <td class="ps-5" colspan="4">Total</td>
+                                    <td class="text-end text-success">₱{{ number_format($daily_payments->sum('amount_paid'), 2) }}</td>
+                                    <td class="text-end text-muted">₱{{ number_format($daily_payments->sum('change_amount'), 2) }}</td>
+                                    <td class="pe-5"></td>
+                                </tr>
+                            </tfoot>
+                            @endif
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             {{-- Transactions table --}}
             <div class="card" id="printable_transactions">
                 <div class="card-header"><h3 class="card-title fw-bold">Transactions on This Day</h3></div>

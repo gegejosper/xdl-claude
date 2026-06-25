@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Models\BranchUser;
 use App\Models\DailySales;
 use App\Models\Transaction;
+use App\Models\TransactionItem;
 use App\Models\TransactionPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,11 +44,19 @@ class DailySalesController extends Controller
         if (!$is_admin && $branch) {
             $query->where('branch_id', $branch->id);
         }
-
+        $today = Carbon::today();
         $records = $query->paginate(30);
         $branches = $is_admin ? Branch::where('status', 'active')->get() : collect();
 
-        return view('daily_sales.index', compact('records', 'is_admin', 'branch', 'branches'));
+        // Recent payment history (branch-scoped for staff)
+        $payments = TransactionPayment::with('transaction.customer')
+            ->where('status', 'accepted')
+            ->whereDate('created_at', $today)
+            ->when(!$is_admin && $branch, fn($q) => $q->whereHas('transaction', fn($t) => $t->where('branch_id', $branch->id)))
+            ->orderBy('created_at', 'desc')
+            ->paginate(20, ['*'], 'payment_page');
+
+        return view('daily_sales.index', compact('records', 'is_admin', 'branch', 'branches', 'payments'));
     }
 
     // ─── Close sales for today (manual by staff) ──────────────────────────────
@@ -130,14 +139,24 @@ class DailySalesController extends Controller
             }
         }
 
-        // Load that day's transactions
+        // Load that day's transactions (exclude canceled)
         $transactions = Transaction::where('branch_id', $record->branch_id)
             ->whereDate('created_at', $record->sales_date)
-            ->with('customer')
+            ->where('payment_status', '!=', 'canceled')
+            ->with(['customer', 'payments'])
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('daily_sales.show', compact('record', 'transactions'));
+        $txn_ids = $transactions->pluck('id');
+
+        // ── Payments made on this specific day ────────────────────────────────
+        $daily_payments = TransactionPayment::where('status', 'accepted')
+            ->whereDate('created_at', $record->sales_date)
+            ->with('transaction.customer')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return view('daily_sales.show', compact('record', 'transactions', 'daily_payments'));
     }
 
     // ─── Today's stats (for dashboard widget) ─────────────────────────────────
@@ -190,14 +209,14 @@ class DailySalesController extends Controller
         $transactions = $txn_query->get();
         $txn_ids      = $transactions->pluck('id');
 
-        $payments = TransactionPayment::whereIn('transaction_id', $txn_ids)
-            ->where('status', 'accepted')
+        $payments = TransactionPayment::where('status', 'accepted')
             ->whereDate('created_at', $date)
             ->get();
 
         // Breakdown by payment method
         $method_breakdown = [];
-        foreach (\App\Models\TransactionPayment::PAYMENT_METHODS as $key => $label) {
+        //dd($payments);
+        foreach (TransactionPayment::PAYMENT_METHODS as $key => $label) {
             $amount = $payments->where('payment_method', $key)->sum('amount_paid');
             if ($amount > 0) {
                 $method_breakdown[$key] = [
@@ -207,13 +226,13 @@ class DailySalesController extends Controller
             }
         }
         // Catch any payments with null/unknown method under 'cash'
-        $known_methods    = array_keys(\App\Models\TransactionPayment::PAYMENT_METHODS);
+        $known_methods    = array_keys(TransactionPayment::PAYMENT_METHODS);
         $unclassified     = $payments->filter(fn($p) => !in_array($p->payment_method, $known_methods))->sum('amount_paid');
         if ($unclassified > 0) {
             $method_breakdown['cash']['amount'] = ($method_breakdown['cash']['amount'] ?? 0) + (float) $unclassified;
             $method_breakdown['cash']['label']  = 'Cash';
         }
-
+        //dd( $method_breakdown  );
         $totals = [
             'total_sales'        => $transactions->sum('total_amount'),
             'total_payments'     => (float) $payments->sum('amount_paid'),
