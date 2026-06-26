@@ -125,7 +125,7 @@
                             </div>
 
                             @if($transaction->note)
-                            <div class="mb-4 alert alert-secondary py-2">
+                            <div class="mb-4 alert alert-secondary py-2 text-black">
                                 <strong>Note:</strong> {{ $transaction->note }}
                             </div>
                             @endif
