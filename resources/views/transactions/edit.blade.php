@@ -412,7 +412,7 @@
         if (SQFT_TYPES.includes(type)) {
             const w          = parseFloat($row.find('.item-width').val())  || 0;
             const h          = parseFloat($row.find('.item-height').val()) || 0;
-            const piece_qty  = parseInt($row.find('.item-qty').val())      || 1;
+            const piece_qty  = parseInt($row.find('.tarp-section .item-qty').val()) || 1;
             const sqft       = w * h;
             const total_sqft = sqft * piece_qty;
             $row.find('.item-sqft').val(sqft > 0 ? sqft.toFixed(2) + ' sq ft' : '');
@@ -426,7 +426,7 @@
             total = Math.max(0, (sized_qty * price) - disc);
             $row.find('.sized-total-qty').text(sized_qty);
         } else {
-            const qty = parseInt($row.find('.item-qty').val()) || 0;
+            const qty = parseInt($row.find('.non-sized-section .item-qty').val()) || 0;
             total = Math.max(0, (qty * price) - disc);
         }
 
@@ -506,7 +506,7 @@
                     $row.find('.size-qty-input[data-size="' + size + '"]').val(qty || 0);
                 });
             } else {
-                $row.find('.item-qty').val(data.quantity || 1);
+                $row.find('.non-sized-section .item-qty').val(data.quantity || 1);
             }
         }
 

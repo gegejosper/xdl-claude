@@ -650,7 +650,7 @@ class TransactionController extends Controller
                 $qty        = max(1, (int)($item['quantity'] ?? 1));
                 $total_sqft = $sqft * $qty;
                 $total      = ($total_sqft * $price) - $discount;
-            } elseif (!empty($item['sizes']) && is_array($item['sizes'])) {
+            } elseif (in_array($type, TransactionItem::SIZED_TYPES, true) && !empty($item['sizes']) && is_array($item['sizes'])) {
                 $qty   = array_sum(array_map('intval', $item['sizes']));
                 $total = ($qty * $price) - $discount;
             } else {
